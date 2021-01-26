@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HNH.ACAD", "CFDG.ACAD\CFDG.ACAD.csproj", "{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.ACAD", "CFDG.ACAD\CFDG.ACAD.csproj", "{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.UI", "CFDG.UI\CFDG.UI.csproj", "{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

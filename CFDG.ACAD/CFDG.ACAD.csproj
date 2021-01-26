@@ -65,5 +65,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CFDG.UI\CFDG.UI.csproj">
+      <Project>{6ebfe50b-0f27-467d-91d1-aa9a3c40317a}</Project>
+      <Name>CFDG.UI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
