@@ -13,6 +13,10 @@ namespace CFDG.UI
     public partial class InputDialog : Form
     {
         public string Value { get; set; }
+        public InputDialog()
+        {
+            InitForm("placeholder", "Input Dialog");
+        }
 
         public InputDialog(string message)
         {
