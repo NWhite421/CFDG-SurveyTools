@@ -89,9 +89,6 @@
     <Reference Include="AeccDbMgd, Version=13.0.613.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\Civil3D2019.Base.1.0.0\lib\AeccDbMgd.dll</HintPath>
     </Reference>
-    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
-      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -109,12 +106,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="appsettings.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CFDG.API\CFDG.API.csproj">
+      <Project>{3e9d0793-99ad-40f6-b73f-8a2fc42dc3e8}</Project>
+      <Name>CFDG.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CFDG.UI\CFDG.UI.csproj">
       <Project>{6ebfe50b-0f27-467d-91d1-aa9a3c40317a}</Project>
       <Name>CFDG.UI</Name>

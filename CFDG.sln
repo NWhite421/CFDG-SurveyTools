@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.ACAD", "CFDG.ACAD\CFDG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.UI", "CFDG.UI\CFDG.UI.csproj", "{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "APITests\APITests.csproj", "{51B1143E-2535-40DB-A437-32EDA82C45B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.API", "CFDG.API\CFDG.API.csproj", "{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

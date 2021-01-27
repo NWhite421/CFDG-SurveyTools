@@ -13,8 +13,7 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Windows;
 using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
-using IniParser;
-using IniParser.Model;
+using CFDG.API;
 
 namespace HNH.ACAD
 {
@@ -147,9 +146,7 @@ namespace HNH.ACAD
         public void EstablishTab()
         {
             //Get tab name
-            var parser = new FileIniDataParser();
-            IniData data = parser.ReadFile("appsettings.ini");
-            string tabName = data["CFDG.ACADPlugin"]["TabTitle"];
+            string tabName = INI.GetAppConfigSetting("ACAD", "TabName");
 
             //Add Ribbon
             RibbonControl ribbon = ComponentManager.Ribbon;
