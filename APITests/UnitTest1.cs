@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CFDG.API;
+using System.IO;
 
 namespace APITests
 {
@@ -11,6 +12,7 @@ namespace APITests
         public void TestMethod1()
         {
             string _ = INI.GetAppConfigSetting("API", "DevMode");
+
         }
     }
 }
