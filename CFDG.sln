@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "APITests\APITes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.API", "CFDG.API\CFDG.API.csproj", "{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyCalculator", "SurveyCalculator\SurveyCalculator.csproj", "{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
