@@ -93,6 +93,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -102,6 +103,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -114,7 +116,7 @@
       <Name>CFDG.API</Name>
     </ProjectReference>
     <ProjectReference Include="..\CFDG.UI\CFDG.UI.csproj">
-      <Project>{6ebfe50b-0f27-467d-91d1-aa9a3c40317a}</Project>
+      <Project>{9e850888-8db7-4b6f-9fd0-a57ba3438b4d}</Project>
       <Name>CFDG.UI</Name>
     </ProjectReference>
   </ItemGroup>

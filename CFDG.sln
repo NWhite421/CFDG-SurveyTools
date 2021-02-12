@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.ACAD", "CFDG.ACAD\CFDG.ACAD.csproj", "{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.UI", "CFDG.UI\CFDG.UI.csproj", "{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "APITests\APITests.csproj", "{51B1143E-2535-40DB-A437-32EDA82C45B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.API", "CFDG.API\CFDG.API.csproj", "{3E9D0793-99AD-40F6-B73F-8A2FC42DC3E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyCalculator", "SurveyCalculator\SurveyCalculator.csproj", "{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyCalculator", "SurveyCalculator\SurveyCalculator.csproj", "{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.UI", "CFDG.UI\CFDG.UI.csproj", "{9E850888-8DB7-4B6F-9FD0-A57BA3438B4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F6DEAB2-711F-4DD7-9668-BB4FC648557B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EBFE50B-0F27-467D-91D1-AA9A3C40317A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51B1143E-2535-40DB-A437-32EDA82C45B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1FD71AA-29B6-4E0A-B96B-B3CBBC978E4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E850888-8DB7-4B6F-9FD0-A57BA3438B4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E850888-8DB7-4B6F-9FD0-A57BA3438B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E850888-8DB7-4B6F-9FD0-A57BA3438B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E850888-8DB7-4B6F-9FD0-A57BA3438B4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
