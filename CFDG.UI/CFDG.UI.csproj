@@ -84,8 +84,15 @@
       <HintPath>..\packages\AutoCAD.NET.23.0.0\lib\net47\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="AecBaseMgd, Version=8.1.48.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Civil3D2019.Base.1.0.0\lib\AecBaseMgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AeccDbMgd, Version=13.0.613.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Civil3D2019.Base.1.0.0\lib\AeccDbMgd.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -100,7 +107,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlotPageDialog.xaml.cs">
+    <Compile Include="windows\FeedbackWindow.xaml.cs">
+      <DependentUpon>FeedbackWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="windows\PlotPageDialog.xaml.cs">
       <DependentUpon>PlotPageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -116,6 +126,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="windows\SlopeDistance.xaml.cs">
+      <DependentUpon>SlopeDistance.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -127,10 +140,24 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="PlotPageDialog.xaml">
+    <Page Include="windows\FeedbackWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="windows\PlotPageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="windows\SlopeDistance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PageMultiple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PageSingle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

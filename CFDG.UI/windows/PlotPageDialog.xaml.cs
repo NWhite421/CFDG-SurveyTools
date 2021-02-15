@@ -30,10 +30,15 @@ namespace CFDG.UI
         public PlotPageDialog(IEnumerable<Layout> layouts)
         {
             InitializeComponent();
-            foreach (Layout lo in layouts)
+            var list = layouts.OrderBy(l => l.TabOrder);
+            foreach (Layout lo in list)
             {
-                AvalableViews.Items.Add(lo.LayoutName);
+                if (lo.LayoutName.ToLower() != "model")
+                    ViewsAvalible.Items.Add(lo.LayoutName);
             }
+
+            PlotDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
+
         }
 
         private void Cancel_form(object sender, RoutedEventArgs e)

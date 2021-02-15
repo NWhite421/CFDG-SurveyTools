@@ -37,7 +37,7 @@ namespace CFDG.API
             var parser = new FileIniDataParser();
             IniData data = parser.ReadFile(iniFile);
             data.SectionKeySeparator = '.';
-            if (data.TryGetKey(section + "."+title, out string valueRaw))
+            if (data.TryGetKey(section + "." + title, out string valueRaw))
             {
                 if (replaceText)
                 {

@@ -10,21 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.IO;
+using System.Windows.Shapes;
 
-namespace SurveyCalculator
+namespace CFDG.UI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for FeedbackWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class FeedbackWindow : Window
     {
-        internal TextBox ActiveText { get; set; }
-
-        public MainWindow()
+        public FeedbackWindow()
         {
             InitializeComponent();
+        }
+
+        public FeedbackWindow(int product, Version version)
+        {
+            InitializeComponent();
+            Product.SelectedIndex = product;
+            productVersion.Text = version.ToString();
         }
     }
 }
