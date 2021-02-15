@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using IniParser;
 using IniParser.Model;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace CFDG.API
 {
 
     public static class INI
     {
-        static private readonly string iniFile = "appsettings.ini";
+        static private readonly string iniFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\appsettings.ini";
 
         /// <summary>
         /// Gets value of setting from appsettings.ini.

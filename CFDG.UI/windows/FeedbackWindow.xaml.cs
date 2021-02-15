@@ -30,5 +30,15 @@ namespace CFDG.UI
             Product.SelectedIndex = product;
             productVersion.Text = version.ToString();
         }
+
+        private void CmdCancel_Click(object s, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CmdSend_Click(object s, RoutedEventArgs e)
+        {
+
+        }
     }
 }
