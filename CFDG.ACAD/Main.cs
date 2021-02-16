@@ -7,6 +7,7 @@ using Autodesk.Windows;
 using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 using CFDG.API;
 using CFDG.ACAD.Functions;
+using Autodesk.AutoCAD.StatusBar;
 
 namespace HNH.ACAD
 {
