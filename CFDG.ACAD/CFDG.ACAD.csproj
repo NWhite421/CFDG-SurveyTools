@@ -114,8 +114,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculations.cs" />
+    <Compile Include="Functions.cs" />
     <Compile Include="ImportExport.cs" />
-    <Compile Include="IntFunctions.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="ProjectManagement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

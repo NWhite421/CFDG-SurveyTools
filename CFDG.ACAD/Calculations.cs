@@ -20,6 +20,8 @@ namespace CFDG.ACAD
     {
         internal static UI.SlopeDistance DistanceWindow;
 
+        //TODO: Change dialog text for selection.
+        //FEATURE: Add option to draw lines when points are selected.
         [CommandMethod("GetSlopeFromPoints")]
         public static void GetSlopeFromPoints()
         {
@@ -45,6 +47,7 @@ namespace CFDG.ACAD
             };
             try
             {
+
                 PromptSelectionResult acPromptSelectionResult = AcEditor.GetSelection(slo, selFltr);
                 if (acPromptSelectionResult.Status == PromptStatus.Cancel) { AcEditor.WriteMessage("\nAction aborted."); return; }
                 if (acPromptSelectionResult.Value.Count < 1) { AcEditor.WriteMessage("\nThe selectiond was empty, please try again."); return; }

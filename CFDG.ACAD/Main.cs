@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Win32.SafeHandles;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
-using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Windows;
 using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
@@ -28,13 +20,13 @@ namespace HNH.ACAD
         void IExtensionApplication.Initialize()
         {
             // Add event handler for every drawing opened.
-            ACApplication.DocumentManager.DocumentCreated += new DocumentCollectionEventHandler(LoadDWG);
+            ACApplication.DocumentManager.DocumentCreated += LoadDWG;
 
             // Add event handler for every drawing closed.
-            ACApplication.DocumentManager.DocumentDestroyed += new DocumentDestroyedEventHandler(UnLoadDWG);
+            ACApplication.DocumentManager.DocumentDestroyed += UnLoadDWG;
 
             // Add event handler when AutoCAD goes idle (removes itself after first run to bypass bullshit).
-            Autodesk.AutoCAD.ApplicationServices.Application.Idle += new EventHandler(OnAppLoad);
+            Autodesk.AutoCAD.ApplicationServices.Application.Idle += OnAppLoad;
         }
 
         /// <summary>
@@ -53,6 +45,8 @@ namespace HNH.ACAD
                 Autodesk.AutoCAD.ApplicationServices.Application.Idle -= OnAppLoad;
             }
 
+            ACApplication.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CFDG Survey plugin version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} has been loaded successfully");
+
             OnEachDocLoad();
         }
 
@@ -61,16 +55,16 @@ namespace HNH.ACAD
         /// </summary>
         public void LoadDWG(object s, DocumentCollectionEventArgs e)
         {
-            //TODO: Impliment logging features and code cleanup.
             OnEachDocLoad();
         }
 
+        //TODO: Add function to notify user if n amount of documents are open.
         /// <summary>
         /// Shared method between LoadDWG and OnAppLoad
         /// </summary>
         internal void OnEachDocLoad()
         {
-            ACApplication.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CFDG Survey plugin version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} has been loaded successfully");
+            
         }
 
         /// <summary>
@@ -78,7 +72,6 @@ namespace HNH.ACAD
         /// </summary>
         public static void UnLoadDWG(object s, DocumentDestroyedEventArgs e)
         {
-            //TODO: Impliment logging features and code cleanup.
         }
 
         /// <summary>
@@ -113,11 +106,10 @@ namespace HNH.ACAD
         /// <summary>
         /// Small placeholder button (horizontal)
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Generic definition for future use")]
         readonly RibbonButton ButtonSmall = new RibbonButton
         {
             Text = "PLACEHOLDER",
-            ShowImage = true,
+            ShowImage = false,
             ShowText = true,
             Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
             LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
@@ -143,7 +135,6 @@ namespace HNH.ACAD
         /// <summary>
         /// Create tab and add panels to tab.
         /// </summary>
-        [CommandMethod("EstablishTabs")]
         public void EstablishTab()
         {
             //Get tab name
@@ -287,6 +278,7 @@ namespace HNH.ACAD
                 ExportGroup.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.Export_PG);
                 rps.Items.Add(ExportGroup);
 
+               
                 btn = ButtonSmall.Clone() as RibbonButton;
                 btn.Text = "Slope From Points";
                 btn.CommandParameter = "GETSLOPEFROMPOINTS ";
