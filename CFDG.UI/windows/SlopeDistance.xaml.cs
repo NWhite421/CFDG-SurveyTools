@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Autodesk.AutoCAD.Geometry;
 using Autodesk.Civil.DatabaseServices;
 
 namespace CFDG.UI
@@ -20,26 +21,46 @@ namespace CFDG.UI
     /// </summary>
     public partial class SlopeDistance : Window
     {
-        public SlopeDistance()
+        public SlopeDistance(Point3d startPoint, Point3d endPoint)
         {
             InitializeComponent();
+            Calculate(startPoint, endPoint);
         }
 
-        public void Calculate(CogoPoint startPoint, CogoPoint endPoint)
+        public void Calculate(Point3d startPoint, Point3d endPoint)
         {
-            PntANumber.Text = $"#{startPoint.PointNumber}";
-            PntAEasting.Text = string.Format("{0:0.00}", startPoint.Easting);
-            PntANorthing.Text = string.Format("{0:0.00}", startPoint.Northing);
-            PntAElevation.Text = string.Format("{0:0.00}", startPoint.Elevation);
+            PntAEasting.Text = string.Format("{0:0.00}", startPoint.X);
+            PntANorthing.Text = string.Format("{0:0.00}", startPoint.Y);
+            PntAElevation.Text = string.Format("{0:0.00}", startPoint.Z);
 
-            PntBNumber.Text = $"#{endPoint.PointNumber}";
-            PntBEasting.Text = string.Format("{0:0.00}", endPoint.Easting);
-            PntBNorthing.Text = string.Format("{0:0.00}", endPoint.Northing);
-            PntBElevation.Text = string.Format("{0:0.00}", endPoint.Elevation);
+            PntBEasting.Text = string.Format("{0:0.00}", endPoint.X);
+            PntBNorthing.Text = string.Format("{0:0.00}", endPoint.Y);
+            PntBElevation.Text = string.Format("{0:0.00}", endPoint.Z);
+            //CalculateValues();
+        }
 
-            var deltaX = Math.Abs(endPoint.Easting - startPoint.Easting);
-            var deltaY = Math.Abs(endPoint.Northing - startPoint.Northing);
-            var deltaZ = startPoint.Elevation - endPoint.Elevation;
+        private void OnTextboxChange(object sender, TextChangedEventArgs e)
+        {
+            if (Double.TryParse(((TextBox)sender).Text, out _))
+            {
+                CalculateValues();
+                Distance.Foreground = Brushes.White;
+                Slope.Foreground = Brushes.White;
+                SlopeAct.Foreground = Brushes.White;
+            }
+            else
+            {
+                Distance.Foreground = Brushes.Red;
+                Slope.Foreground = Brushes.Red;
+                SlopeAct.Foreground = Brushes.Red;
+            }
+        }
+
+        private void CalculateValues()
+        {
+            var deltaX = Math.Abs(Convert.ToDouble(PntBEasting.Text) - Convert.ToDouble(PntAEasting.Text));
+            var deltaY = Math.Abs(Convert.ToDouble(PntBNorthing.Text) - Convert.ToDouble(PntANorthing.Text));
+            var deltaZ = Convert.ToDouble(PntAElevation.Text) - Convert.ToDouble(PntBElevation.Text);
 
             var distance = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
             var slope = deltaZ / distance;

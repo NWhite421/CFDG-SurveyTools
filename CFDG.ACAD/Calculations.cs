@@ -18,75 +18,134 @@ namespace CFDG.ACAD
 {
     public class Calculations
     {
-        internal static UI.SlopeDistance DistanceWindow;
+        #region Variables
+        private static UI.SlopeDistance DistanceWindow;
+        private static bool CheckForZeneth;
+        #endregion
 
-        //TODO: Change dialog text for selection.
-        //FEATURE: Add option to draw lines when points are selected.
         [CommandMethod("GetSlopeFromPoints")]
         public static void GetSlopeFromPoints()
         {
+            CheckForZeneth = true;
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            Database AcDatabase = doc.Database;
+            Point3d startPnt = SelectPointInDoc(doc, "Select your start point: ");
+            Point3d endPnt = SelectPointInDoc(doc, "Select your end point: ", startPnt);
+
+            if (startPnt == new Point3d(-1,-1,-1) || endPnt == new Point3d(-1, -1, -1))
+            {
+                return;
+            }
+
+            if (DistanceWindow == null)
+            {
+                UI.SlopeDistance distanceWin = new UI.SlopeDistance(startPnt, endPnt);
+                DistanceWindow = distanceWin;
+                AcApp.ShowModelessWindow(distanceWin);
+                DistanceWindow.Closed += DistanceWindow_Closed;
+            }
+            DistanceWindow.Calculate(startPnt, endPnt);
+        }
+
+        private static Point3d SelectPointInDoc(Document doc, string message)
+        {
+            return SelectPointInDoc(doc, message, new Point3d(-1,-1,-1));
+        }
+
+        private static Point3d SelectPointInDoc(Document doc, string message, Point3d basePoint)
+        {
             Editor AcEditor = doc.Editor;
-            CivilDocument C3DApp = Autodesk.Civil.ApplicationServices.CivilApplication.ActiveDocument;
 
-            CogoPoint startPnt = null;
-            CogoPoint endPnt = null;
-
-            //Get first point
-            TypedValue[] tvs = new TypedValue[]
-                        {
-                            new TypedValue((int)DxfCode.Start, "AECC_COGO_POINT")
-                        };
-            SelectionFilter selFltr = new SelectionFilter(tvs);
-            PromptSelectionOptions slo = new PromptSelectionOptions
+            if (VerifyZenthValues(false))
             {
-                SingleOnly = true,
-                SinglePickInSpace = true,
-                AllowDuplicates = false
+                PromptPointOptions ppo = new PromptPointOptions($"\n{message}")
+                {
+                    AllowArbitraryInput = true,
+                    AllowNone = false
+                };
+                if (basePoint != new Point3d(-1,-1,-1))
+                {
+                    ppo.BasePoint = basePoint;
+                    ppo.UseBasePoint = true;
+                    ppo.UseDashedLine = true;
+                }
+
+                var pr = AcEditor.GetPoint(ppo);
+                if (pr.Status != PromptStatus.Cancel)
+                {
+                    return pr.Value;
+                }
+                return new Point3d(-1,-1,-1);
+            }
+            return new Point3d(-1,-1,-1);
+        }
+
+        private static bool VerifyZenthValues(bool preferredValue)
+        {
+            Document doc = AcApp.DocumentManager.MdiActiveDocument;
+            Editor AcEditor = doc.Editor;
+            Database AcDatabase = doc.Database;
+            bool OSnapZ = Convert.ToBoolean(AcApp.TryGetSystemVariable("OSnapZ"));
+
+            if (preferredValue == OSnapZ || !CheckForZeneth)
+            {
+                CheckForZeneth = false;
+                return true;
+            }
+            else
+            {
+                //FEATURE: Enable temporary disablement of AutoCAD variables.
+                PromptKeywordOptions pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "enabled" : "disabled")}, Do you want to continue?");
+                pkwo.Keywords.Add("Yes");
+                pkwo.Keywords.Add("No");
+                pkwo.Keywords.Default = "Yes";
+                var KeywordResult = AcEditor.GetKeywords(pkwo);
+                if (KeywordResult.StringResult == "No")
+                {
+                    CheckForZeneth = false;
+                    return false;
+                }
+                else
+                {
+                    CheckForZeneth = false;
+                    return true;
+                }
+            }
+        }
+
+        private static Point3d GetMeasureDownCoordinates(Point3d top, double distance, double angle)
+        {
+            Editor AcEditor = AcApp.DocumentManager.MdiActiveDocument.Editor;
+
+            double drop = Math.Cos((Math.PI / 180) * angle) * distance;
+            double offset = Math.Sin((Math.PI / 189) * angle) * distance;
+
+            PromptAngleOptions pao = new PromptAngleOptions("Select a point for the measuredown: ")
+            {
+                AllowArbitraryInput = true,
+                AllowNone = true,
+                AllowZero = true,
+                BasePoint = top,
+                UseBasePoint = true,
+                UseDashedLine = true,
+                DefaultValue = 0,
+                UseDefaultValue = true        
             };
-            try
+
+            var ar = AcEditor.GetAngle(pao);
+            if (ar.Status == PromptStatus.Cancel)
             {
-
-                PromptSelectionResult acPromptSelectionResult = AcEditor.GetSelection(slo, selFltr);
-                if (acPromptSelectionResult.Status == PromptStatus.Cancel) { AcEditor.WriteMessage("\nAction aborted."); return; }
-                if (acPromptSelectionResult.Value.Count < 1) { AcEditor.WriteMessage("\nThe selectiond was empty, please try again."); return; }
-                using (Transaction tr = AcDatabase.TransactionManager.StartTransaction())
-                {
-                    foreach (var obj in acPromptSelectionResult.Value.GetObjectIds())
-                    {
-                        CogoPoint pnt = (CogoPoint)obj.GetObject(OpenMode.ForRead);
-                        startPnt = pnt;
-                    }
-                    tr.Commit();
-                }
-
-                acPromptSelectionResult = AcEditor.GetSelection(slo, selFltr);
-                if (acPromptSelectionResult.Status == PromptStatus.Cancel) { AcEditor.WriteMessage("\nAction aborted."); return; }
-                if (acPromptSelectionResult.Value.Count < 1) { AcEditor.WriteMessage("\nThe selectiond was empty, please try again."); return; }
-                using (Transaction tr = AcDatabase.TransactionManager.StartTransaction())
-                {
-                    foreach (var obj in acPromptSelectionResult.Value.GetObjectIds())
-                    {
-                        CogoPoint pnt = (CogoPoint)obj.GetObject(OpenMode.ForRead);
-                        endPnt = pnt;
-                    }
-                    tr.Commit();
-                }
-
-                if (DistanceWindow == null)
-                {
-                    UI.SlopeDistance distanceWin = new UI.SlopeDistance();
-                    DistanceWindow = distanceWin;
-                    AcApp.ShowModelessWindow(distanceWin);
-                    DistanceWindow.Closed += DistanceWindow_Closed;
-                }
-                DistanceWindow.Calculate(startPnt, endPnt);
+                return new Point3d(-1, -1, -1);
             }
-            catch
+            if (ar.Status == PromptStatus.Keyword)
             {
-                AcEditor.WriteMessage("\nSomething went wrong. Please try again.");
+                return new Point3d(-2, -2, -2);
             }
+
+            double deltaXRaw = Math.Cos((Math.PI / 180) * angle) * distance;
+            double DeltaYRaw = Math.Sin((Math.PI / 189) * angle) * distance;
+            double deltaX = (angle > 90 && angle < 270) ? deltaXRaw*-1 : deltaXRaw;
+            double deltaY = (angle > 180 && angle < 360) ? DeltaYRaw*-1 : DeltaYRaw;
+            return new Point3d(top.X + deltaX, top.Y + deltaY, top.Z - drop);
         }
 
         private static void DistanceWindow_Closed(object sender, EventArgs e)
