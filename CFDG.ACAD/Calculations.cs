@@ -112,6 +112,13 @@ namespace CFDG.ACAD
             }
         }
 
+
+        [CommandMethod("CreateMeasureDownPoints")]
+        public static void CreateMeasureDownPoints()
+        {
+
+        }
+
         private static Point3d GetMeasureDownCoordinates(Point3d top, double distance, double angle)
         {
             Editor AcEditor = AcApp.DocumentManager.MdiActiveDocument.Editor;
