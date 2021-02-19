@@ -47,13 +47,18 @@
     <Compile Include="INIHandler.cs" />
     <Compile Include="JobNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XMLLibrary.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="appsettings.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="AppSettings.json" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppSettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

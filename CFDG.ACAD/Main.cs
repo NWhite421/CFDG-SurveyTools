@@ -65,7 +65,10 @@ namespace HNH.ACAD
         /// </summary>
         internal void OnEachDocLoad()
         {
-            
+            if (bool.Parse(XML.ReadValue("Autocad", "EnableOsnapZ")))
+            {
+                ACApplication.SetSystemVariable("OSnapZ", 1);
+            }
         }
 
         /// <summary>
@@ -139,7 +142,7 @@ namespace HNH.ACAD
         public void EstablishTab()
         {
             //Get tab name
-            string tabName = INI.GetAppConfigSetting("ACAD", "TabName");
+            string tabName = XML.ReadValue("General","CompanyAbbreviation");
 
             //Add Ribbon
             RibbonControl ribbon = ComponentManager.Ribbon;
@@ -166,8 +169,6 @@ namespace HNH.ACAD
 
                 #region Project Management
 
-                if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "EnableProjectManagement")))
-                {
                     rps = new RibbonPanelSource
                     {
                         Title = "Project Management",
@@ -179,79 +180,62 @@ namespace HNH.ACAD
                         Source = rps
                     };
 
-                    if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "EnableFolders")))
+                    var OpenFolderSplit = new RibbonSplitButton
                     {
-                        var OpenFolderSplit = new RibbonSplitButton
-                        {
-                            Text = "splitbutton",
-                            CommandHandler = new RibbonButtonHandler(),
-                            ShowImage = true,
-                            ShowText = true,
-                            Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
-                            LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
-                            IsSplit = true,
-                            Size = RibbonItemSize.Large,
-                            Orientation = System.Windows.Controls.Orientation.Vertical
-                        };
+                        Text = "splitbutton",
+                        CommandHandler = new RibbonButtonHandler(),
+                        ShowImage = true,
+                        ShowText = true,
+                        Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
+                        LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
+                        IsSplit = true,
+                        Size = RibbonItemSize.Large,
+                        Orientation = System.Windows.Controls.Orientation.Vertical
+                    };
 
-                        btn = ButtonLarge.Clone() as RibbonButton;
-                        btn.Text = $"Open{Environment.NewLine}Folder";
-                        btn.CommandParameter = "._OpenProjectFolder ";
-                        btn.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.folder);
-                        OpenFolderSplit.Items.Add(btn);
+                    btn = ButtonLarge.Clone() as RibbonButton;
+                    btn.Text = $"Open{Environment.NewLine}Folder";
+                    btn.CommandParameter = "._OpenProjectFolder ";
+                    btn.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.folder);
+                    OpenFolderSplit.Items.Add(btn);
 
-                        if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "ShowCompFolder")))
-                        {
-                            btn = ButtonLarge.Clone() as RibbonButton;
-                            btn.Text = $"Open{Environment.NewLine}Comp Folder";
-                            btn.CommandParameter = "._OpenCompFolder ";
-                            btn.LargeImage = Imaging.BitmapToImageSource(
-                                CFDG.ACAD.Properties.Resources.folder,
-                                CFDG.ACAD.Properties.Resources.overlay_edit
-                            );
-                            OpenFolderSplit.Items.Add(btn);
-                        }
+                    btn = ButtonLarge.Clone() as RibbonButton;
+                    btn.Text = $"Open{Environment.NewLine}Comp Folder";
+                    btn.CommandParameter = "._OpenCompFolder ";
+                    btn.LargeImage = Imaging.BitmapToImageSource(
+                        CFDG.ACAD.Properties.Resources.folder,
+                        CFDG.ACAD.Properties.Resources.overlay_edit
+                    );
+                    OpenFolderSplit.Items.Add(btn);
 
-                        if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "ShowFieldDataFolder")))
-                        {
-                            btn = ButtonLarge.Clone() as RibbonButton;
-                            btn.Text = $"Open{Environment.NewLine}Field Data";
-                            btn.CommandParameter = "._OpenFieldDataFolder ";
-                            btn.LargeImage = Imaging.BitmapToImageSource(
-                                CFDG.ACAD.Properties.Resources.folder,
-                                CFDG.ACAD.Properties.Resources.overlay_field
-                            );
-                            OpenFolderSplit.Items.Add(btn);
-                        }
+                    btn = ButtonLarge.Clone() as RibbonButton;
+                    btn.Text = $"Open{Environment.NewLine}Field Data";
+                    btn.CommandParameter = "._OpenFieldDataFolder ";
+                    btn.LargeImage = Imaging.BitmapToImageSource(
+                        CFDG.ACAD.Properties.Resources.folder,
+                        CFDG.ACAD.Properties.Resources.overlay_field
+                    );
+                    OpenFolderSplit.Items.Add(btn);
 
-                        if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "ShowSubmittalFolder")))
-                        {
-                            btn = ButtonLarge.Clone() as RibbonButton;
-                            btn.Text = $"Open{Environment.NewLine}Submittals";
-                            btn.CommandParameter = "._OpenSubmittalFolder ";
-                            btn.LargeImage = Imaging.BitmapToImageSource(
-                                CFDG.ACAD.Properties.Resources.folder,
-                                CFDG.ACAD.Properties.Resources.arrow_up
-                            );
-                            OpenFolderSplit.Items.Add(btn);
-                        }
+                    btn = ButtonLarge.Clone() as RibbonButton;
+                    btn.Text = $"Open{Environment.NewLine}Submittals";
+                    btn.CommandParameter = "._OpenSubmittalFolder ";
+                    btn.LargeImage = Imaging.BitmapToImageSource(
+                        CFDG.ACAD.Properties.Resources.folder,
+                        CFDG.ACAD.Properties.Resources.arrow_up
+                    );
+                    OpenFolderSplit.Items.Add(btn);
 
-                        rps.Items.Add(OpenFolderSplit);
-                    }
+                    rps.Items.Add(OpenFolderSplit);
 
-                    if (Boolean.Parse(INI.GetAppConfigSetting("ACAD", "EnableProjectInfo")))
-                    {
                         btn = ButtonLarge.Clone() as RibbonButton;
                         btn.Text = $"Project{Environment.NewLine}Information";
                         //CompFolderbtn.CommandParameter = "._OpenProjectFolder ";
                         //btn.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.folder);
                         rps.Items.Add(btn);
-                    }
 
                     if (rps.Items.Count != 0)
                         rtab.Panels.Add(rp);
-
-                }
 
                 #endregion
 

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <!--General Settings-->
+  <general>
+    <companyabbreviation value="CFDG"/>
+  </general>
+  <!--AutoCAD Settings-->
+  <autocad>
+    <enableosnapz value="true"/>
+  </autocad>
+</settings>

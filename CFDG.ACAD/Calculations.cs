@@ -94,7 +94,7 @@ namespace CFDG.ACAD
             else
             {
                 //FEATURE: Enable temporary disablement of AutoCAD variables.
-                PromptKeywordOptions pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "enabled" : "disabled")}, Do you want to continue?");
+                PromptKeywordOptions pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "disabled" : "enabled")}, Do you want to continue?");
                 pkwo.Keywords.Add("Yes");
                 pkwo.Keywords.Add("No");
                 pkwo.Keywords.Default = "Yes";
