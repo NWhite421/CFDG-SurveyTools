@@ -26,7 +26,7 @@ namespace CFDG.API
         /// <param name="category">Setting category</param>
         /// <param name="key">Key name</param>
         /// <returns>Value or null if not found.</returns>
-        public static string ReadValue(string category, string key)
+        public static object ReadValue(string category, string key)
         {
             if (xmlElement == null)
             {
@@ -40,34 +40,70 @@ namespace CFDG.API
                 return null;
             }
 
-            string value = RetreiveValue(category, key);
-            if (string.IsNullOrEmpty(value))
+            string[] value = RetreiveValue(category, key);
+            if (value == null)
             {
+                return null;
             }
-            return value;
+
+            return ConvertStringToType(value);
         }
         #endregion
 
         #region Private Methods
 
-        private static string RetreiveValue(string category, string key)
+        private static string[] RetreiveValue(string category, string key)
         {
             try
             {
-                var element = xmlElement
+                var value = xmlElement
                     .Element(category)
                     .Element(key)
                     .Attribute("value")
                     .Value;
-                if (string.IsNullOrEmpty(element))
+                var type = xmlElement
+                    .Element(category)
+                    .Element(key)
+                    .Attribute("type")
+                    .Value;
+                if (string.IsNullOrEmpty(value))
                 {
                     return null;
                 }
-                return element;
+                return new string[] { value, type };
             }
             catch
             {
                 return null;
+            }
+        }
+
+        private static object ConvertStringToType(string[] content)
+        {
+            string value = content[0];
+            string type = content[1];
+
+            switch (type.ToLower())
+            {
+                case "int":
+                    {
+                        if (int.TryParse(value, out int convert))
+                        {
+                            return convert;
+                        }
+                        return null;
+                    }
+                case "bool":
+                    {
+                        if (bool.TryParse(value, out bool convert))
+                        {
+                            return convert;
+                        }
+                        return null;
+                    }
+                case "string":
+                default:
+                    return value;
             }
         }
         #endregion

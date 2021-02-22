@@ -65,7 +65,7 @@ namespace HNH.ACAD
         /// </summary>
         internal void OnEachDocLoad()
         {
-            if (bool.Parse(XML.ReadValue("Autocad", "EnableOsnapZ")))
+            if ((bool)XML.ReadValue("Autocad", "EnableOsnapZ"))
             {
                 ACApplication.SetSystemVariable("OSnapZ", 1);
             }
@@ -142,7 +142,7 @@ namespace HNH.ACAD
         public void EstablishTab()
         {
             //Get tab name
-            string tabName = XML.ReadValue("General","CompanyAbbreviation");
+            string tabName = (string)XML.ReadValue("General","CompanyAbbreviation");
 
             //Add Ribbon
             RibbonControl ribbon = ComponentManager.Ribbon;

@@ -2,10 +2,17 @@
 <settings>
   <!--General Settings-->
   <general>
-    <companyabbreviation value="CFDG"/>
+    <companyname value="Central Florida Design Group" type="string"/>
+    <companyabbreviation value="CFDG" type="string"/>
+    <defaultprojectpath value="Z:\" type="string"/>
+    <defaultprojectnumber value="(((\d{2}|\d{4})-\d{2}-\d{3})|\d{9}|\d{7})" type="string"/>
   </general>
+  <api>
+    <devmode value="false" type="bool"/>
+    <testint value="12" type="int"/>
+  </api>
   <!--AutoCAD Settings-->
   <autocad>
-    <enableosnapz value="true"/>
+    <enableosnapz value="true" type="bool"/>
   </autocad>
 </settings>

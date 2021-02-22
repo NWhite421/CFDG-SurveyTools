@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -13,6 +10,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.Civil.ApplicationServices;
 using Autodesk.Civil.DatabaseServices;
 using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
+using CFDG.API;
 
 namespace CFDG.ACAD
 {
@@ -125,7 +123,7 @@ namespace CFDG.ACAD
 
             double drop = Math.Cos((Math.PI / 180) * angle) * distance;
             double offset = Math.Sin((Math.PI / 189) * angle) * distance;
-
+            
             PromptAngleOptions pao = new PromptAngleOptions("Select a point for the measuredown: ")
             {
                 AllowArbitraryInput = true,

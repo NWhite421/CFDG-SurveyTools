@@ -6,15 +6,14 @@ namespace CFDG.API.Tests
     [TestFixture]
     public class XML
     {
-        [Test]
-        public void GetValues()
+        [Theory]
+        [TestCase("general", "companyabbreviation", "CFDG")]
+        [TestCase("autocad", "enableosnapz", true)]
+        [TestCase("autocad", "novalue", null)]
+        public void GetValues(string category, string key, object expected)
         {
-            string value = API.XML.ReadValue("general", "companyabbreviation");
-            Assert.AreEqual(value, "CFDG");
-            value = API.XML.ReadValue("AUTOCAD", "EnableOSnapZ");
-            Assert.AreEqual(value, "true");
-            value = API.XML.ReadValue("AUTOCAD", "NonExistantValue");
-            Assert.AreEqual(value, null);
+            var value = API.XML.ReadValue(category, key);
+            Assert.AreEqual(value, expected);
         }
     }
 }
