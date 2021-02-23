@@ -1,9 +1,7 @@
 ﻿using System;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Windows;
-using CFDG.ACAD.Functions;
 using CFDG.API;
 using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
@@ -11,12 +9,12 @@ namespace CFDG.ACAD
 {
     public class Commands : IExtensionApplication
     {
-        #region INIT AND DEINIT
+        #region Interface Methods
 
         /// <summary>
         /// Establish the initial event handlers
         /// </summary>
-        void IExtensionApplication.Initialize()
+        public void Initialize()
         {
             // Add event handler for every drawing opened.
             ACApplication.DocumentManager.DocumentCreated += LoadDWG;
@@ -29,10 +27,21 @@ namespace CFDG.ACAD
         }
 
         /// <summary>
+        /// Fires once when the plugin is unloaded(? assumes when either plugin crashes or application is closed)
+        /// </summary>
+        public void Terminate()
+        {
+
+        }
+
+        #endregion
+
+        #region Internal Methods
+        /// <summary>
         /// Runs when the Autocad Application executes Idle event handler. Removes itself after first run.
         /// Litterally a copy paste of LoadDWG() with the added benefit of custom tab addition.
         /// </summary>
-        public void OnAppLoad(object s, EventArgs e)
+        private void OnAppLoad(object s, EventArgs e)
         {
             // Add custom ribbon to RibbonControl
             RibbonControl ribbon = ComponentManager.Ribbon;
@@ -52,7 +61,7 @@ namespace CFDG.ACAD
         /// <summary>
         /// Runs when a new drawing is opened.
         /// </summary>
-        public void LoadDWG(object s, DocumentCollectionEventArgs e)
+        private void LoadDWG(object s, DocumentCollectionEventArgs e)
         {
             OnEachDocLoad();
         }
@@ -61,7 +70,7 @@ namespace CFDG.ACAD
         /// <summary>
         /// Shared method between LoadDWG and OnAppLoad
         /// </summary>
-        internal void OnEachDocLoad()
+        private void OnEachDocLoad()
         {
             if ((bool)XML.ReadValue("Autocad", "EnableOsnapZ"))
             {
@@ -72,72 +81,14 @@ namespace CFDG.ACAD
         /// <summary>
         /// Runs when a drawing is closed.
         /// </summary>
-        public static void UnLoadDWG(object s, DocumentDestroyedEventArgs e)
+        private void UnLoadDWG(object s, DocumentDestroyedEventArgs e)
         {
         }
 
-        /// <summary>
-        /// Fires once when the plugin is unloaded(? assumes when either plugin crashes or application is closed)
-        /// </summary>
-        void IExtensionApplication.Terminate()
-        {
-
-        }
-
-        #endregion
-
-        #region RIBBON
-
-        #region DEFAULT DEFINITIONS
-        /// <summary>
-        /// Large placeholder button (vertical)
-        /// </summary>
-        private readonly RibbonButton ButtonLarge = new RibbonButton
-        {
-            Text = "PLACEHOLDER",
-            ShowImage = true,
-            ShowText = true,
-            Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
-            LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
-            Orientation = System.Windows.Controls.Orientation.Vertical,
-            Size = RibbonItemSize.Large,
-            CommandHandler = new RibbonButtonHandler(),
-            CommandParameter = "._PLACEHOLDER ",
-        };
-
-        /// <summary>
-        /// Small placeholder button (horizontal)
-        /// </summary>
-        private readonly RibbonButton ButtonSmall = new RibbonButton
-        {
-            Text = "PLACEHOLDER",
-            ShowImage = false,
-            ShowText = true,
-            Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
-            LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
-            Orientation = System.Windows.Controls.Orientation.Horizontal,
-            Size = RibbonItemSize.Standard,
-            CommandHandler = new RibbonButtonHandler(),
-            CommandParameter = "._PLACEHOLDER "
-        };
-
-        /// <summary>
-        /// A command to fill space until an actual command is made.
-        /// </summary>
-        [CommandMethod("PLACEHOLDER", CommandFlags.Transparent)]
-        public void PlaceholderCommand()
-        {
-            Document doc = ACApplication.DocumentManager.MdiActiveDocument;
-            Editor ed = doc.Editor;
-            ed.WriteMessage("Command not implimented yet..." + Environment.NewLine);
-        }
-        #endregion
-
-        #region RIBBON CREATION
         /// <summary>
         /// Create tab and add panels to tab.
         /// </summary>
-        public void EstablishTab()
+        private void EstablishTab()
         {
             //TODO: Fix tab name to include "Survey"
             //Get tab name
@@ -192,10 +143,8 @@ namespace CFDG.ACAD
                     ribbon.Tabs.Add(rtab);
                 }
             }
-            #endregion
 
-            #endregion
-
-        }
+        } 
+        #endregion
     }
 }
