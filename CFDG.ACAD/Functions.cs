@@ -1,5 +1,4 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -9,14 +8,27 @@ using System.Windows.Media.Imaging;
 
 namespace CFDG.ACAD.Functions
 {
-    class DocumentProperties
+    /// <summary>
+    /// Methods relating to the handling of AutoCAD Documents
+    /// </summary>
+    public class DocumentProperties
     {
+        /// <summary>
+        /// Retrieve the job number from a file name.
+        /// </summary>
+        /// <param name="document">Document object</param>
+        /// <returns>Job number found or empty if not found.</returns>
         public static string GetJobNumber(Document document)
         {
             var jobNumber = Path.GetFileNameWithoutExtension(document.Name);
             return Parse(jobNumber);
         }
 
+        /// <summary>
+        /// Retrieve the job number from a file name.
+        /// </summary>
+        /// <param name="document">Document path</param>
+        /// <returns>Job number found or empty if not found.</returns>
         public static string GetJobNumber(string document)
         {
             var jobNumber = Path.GetFileNameWithoutExtension(document);
@@ -26,8 +38,8 @@ namespace CFDG.ACAD.Functions
         /// <summary>
         /// Parses a file name to determine if the job number is in the filename.
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+        /// <param name="fileName">Filename to search for a job number.</param>
+        /// <returns>Job number or <paramref name="empty"/> string</returns>
         private static string Parse(string fileName)
         {
             var match = Regex.Match(fileName, API.XML.ReadValue("General", "DefaultProjectNumber"));
@@ -38,8 +50,17 @@ namespace CFDG.ACAD.Functions
             return "";
         }
     }
-    class Imaging
+
+    /// <summary>
+    /// Functions relating to Imaging
+    /// </summary>
+    public class Imaging
     {
+        /// <summary>
+        /// Creates an ImageSource object out of the <paramref name="bitmap"/> provided.
+        /// </summary>
+        /// <param name="bitmap">Bitmap to convert</param>
+        /// <returns>ImageSource of Bitmap</returns>
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -56,7 +77,11 @@ namespace CFDG.ACAD.Functions
             }
         }
 
-
+        /// <summary>
+        /// Creates an ImageSource object out of the <paramref name="bitmaps"/> provided. <paramref name="Bitmaps"/> are stacked on top of each other in provided order.
+        /// </summary>
+        /// <param name="bitmaps">Bitmaps to convert</param>
+        /// <returns>ImageSource of Bitmaps stacked</returns>
         public static BitmapImage BitmapToImageSource(params Bitmap[] bitmaps)
         {
             if (bitmaps.Length == 0)
@@ -68,7 +93,7 @@ namespace CFDG.ACAD.Functions
             {
                 foreach (Bitmap map in bitmaps)
                 {
-                    g.DrawImage(map, System.Drawing.Point.Empty);
+                    g.DrawImage(map, Point.Empty);
                 }
             }
             return BitmapToImageSource(result);

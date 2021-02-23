@@ -9,7 +9,7 @@ using CFDG.API;
 using CFDG.ACAD.Functions;
 using Autodesk.AutoCAD.StatusBar;
 
-namespace HNH.ACAD
+namespace CFDG.ACAD
 {
     public class Commands : IExtensionApplication
     {
@@ -46,7 +46,7 @@ namespace HNH.ACAD
                 Autodesk.AutoCAD.ApplicationServices.Application.Idle -= OnAppLoad;
             }
 
-            ACApplication.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"CFDG Survey plugin version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} has been loaded successfully");
+            ACApplication.DocumentManager.MdiActiveDocument.Editor.WriteMessage($"\nCFDG Survey plugin version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} has been loaded successfully\n");
 
             OnEachDocLoad();
         }
@@ -141,6 +141,7 @@ namespace HNH.ACAD
         /// </summary>
         public void EstablishTab()
         {
+            //TODO: Fix tab name to include "Survey"
             //Get tab name
             string tabName = (string)XML.ReadValue("General","CompanyAbbreviation");
 
@@ -163,205 +164,37 @@ namespace HNH.ACAD
                     Id = "CSurveyTab"
                 };
 
-                RibbonPanelSource rps;
-                RibbonPanel rp;
-                RibbonButton btn;
+                //Project Management Tab
+                rtab.Panels.Add(
+                    Ribbon.CreatePanel("Project Management", "ProjectManagement",
+                    Ribbon.CreateLargeSplitButton(
+                        Ribbon.CreateLargeButton("Open\nFolder", "OpenProjectFolder", Properties.Resources.folder),
+                        Ribbon.CreateLargeButton("Open Comp\nFolder", "OpenCompFolder", Properties.Resources.folder, Properties.Resources.overlay_edit),
+                        Ribbon.CreateLargeButton("Open Field\nData Folder", "OpenFieldDataFold", Properties.Resources.folder, Properties.Resources.overlay_field),
+                        Ribbon.CreateLargeButton("Open Submittal\nFolder", "OpenSubmittalFolder", Properties.Resources.folder, Properties.Resources.overlay_export)
+                        )
+                    )
+                );
 
-                #region Project Management
-
-                    rps = new RibbonPanelSource
-                    {
-                        Title = "Project Management",
-                        Name = "Project Management"
-                    };
-
-                    rp = new RibbonPanel
-                    {
-                        Source = rps
-                    };
-
-                    var OpenFolderSplit = new RibbonSplitButton
-                    {
-                        Text = "splitbutton",
-                        CommandHandler = new RibbonButtonHandler(),
-                        ShowImage = true,
-                        ShowText = true,
-                        Image = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_16),
-                        LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.placehold_32),
-                        IsSplit = true,
-                        Size = RibbonItemSize.Large,
-                        Orientation = System.Windows.Controls.Orientation.Vertical
-                    };
-
-                    btn = ButtonLarge.Clone() as RibbonButton;
-                    btn.Text = $"Open{Environment.NewLine}Folder";
-                    btn.CommandParameter = "._OpenProjectFolder ";
-                    btn.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.folder);
-                    OpenFolderSplit.Items.Add(btn);
-
-                    btn = ButtonLarge.Clone() as RibbonButton;
-                    btn.Text = $"Open{Environment.NewLine}Comp Folder";
-                    btn.CommandParameter = "._OpenCompFolder ";
-                    btn.LargeImage = Imaging.BitmapToImageSource(
-                        CFDG.ACAD.Properties.Resources.folder,
-                        CFDG.ACAD.Properties.Resources.overlay_edit
-                    );
-                    OpenFolderSplit.Items.Add(btn);
-
-                    btn = ButtonLarge.Clone() as RibbonButton;
-                    btn.Text = $"Open{Environment.NewLine}Field Data";
-                    btn.CommandParameter = "._OpenFieldDataFolder ";
-                    btn.LargeImage = Imaging.BitmapToImageSource(
-                        CFDG.ACAD.Properties.Resources.folder,
-                        CFDG.ACAD.Properties.Resources.overlay_field
-                    );
-                    OpenFolderSplit.Items.Add(btn);
-
-                    btn = ButtonLarge.Clone() as RibbonButton;
-                    btn.Text = $"Open{Environment.NewLine}Submittals";
-                    btn.CommandParameter = "._OpenSubmittalFolder ";
-                    btn.LargeImage = Imaging.BitmapToImageSource(
-                        CFDG.ACAD.Properties.Resources.folder,
-                        CFDG.ACAD.Properties.Resources.arrow_up
-                    );
-                    OpenFolderSplit.Items.Add(btn);
-
-                    rps.Items.Add(OpenFolderSplit);
-
-                        btn = ButtonLarge.Clone() as RibbonButton;
-                        btn.Text = $"Project{Environment.NewLine}Information";
-                        //CompFolderbtn.CommandParameter = "._OpenProjectFolder ";
-                        //btn.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.folder);
-                        rps.Items.Add(btn);
-
-                    if (rps.Items.Count != 0)
-                        rtab.Panels.Add(rp);
-
-                #endregion
-
-                #region Computations
-
-                rps = new RibbonPanelSource
-                {
-                    Title = "Computations",
-                    Name = "Computations"
-                };
-                rp = new RibbonPanel
-                {
-                    Source = rps
-                };
-
-                RibbonButton GroupPoints = ButtonLarge.Clone() as RibbonButton;
-                GroupPoints.Text = $"Group Comp{Environment.NewLine}Points";
-                GroupPoints.CommandParameter = "_.CreateGroupOfCalcs ";
-                GroupPoints.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.Create_PG);
-                rps.Items.Add(GroupPoints);
-
-                RibbonButton ExportGroup = ButtonLarge.Clone() as RibbonButton;
-                ExportGroup.Text = $"Export Point{Environment.NewLine}Groups";
-                //ExportGroup.CommandParameter = "_.ExportPointGroups ";
-                ExportGroup.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.Export_PG);
-                rps.Items.Add(ExportGroup);
-
-                var spacer = new RibbonSeparator()
-                {
-                    SeparatorStyle = RibbonSeparatorStyle.Spacer
-                };
-
-                rps.Items.Add(spacer);
-
-                RibbonRowPanel rrp = new RibbonRowPanel();
-               
-                btn = ButtonSmall.Clone() as RibbonButton;
-                btn.Text = "Slope From Points";
-                btn.CommandParameter = "SlopeFromPoints ";
-                rrp.Items.Add(btn);
-                rrp.Items.Add(new RibbonRowBreak());
-
-                btn = ButtonSmall.Clone() as RibbonButton;
-                btn.Text = "Create Measure Down";
-                btn.CommandParameter = "Measuredowns ";
-                rrp.Items.Add(btn);
-
-                rps.Items.Add(rrp);
-
-                if (rps.Items.Count != 0)
-                    rtab.Panels.Add(rp);
-                #endregion
-
-                #region Import & Export
-
-                #endregion
-
-                #region Support
-                rps = new RibbonPanelSource
-                {
-                    Title = "Support",
-                    Name = "Support"
-                };
-                rp = new RibbonPanel
-                {
-                    Source = rps
-                };
-
-                btn = ButtonLarge.Clone() as RibbonButton;
-                btn.Text = "Give\nFeedback";
-                btn.CommandParameter = "_.OpenCFDGFeedbackWindow ";
-                rps.Items.Add(btn);
-
-
-                if (rps.Items.Count != 0)
-                    rtab.Panels.Add(rp);
-                #endregion
+                //Computations Tab
+                rtab.Panels.Add(
+                    Ribbon.CreatePanel("Computations", "Computations",
+                        Ribbon.CreateLargeButton("Group Comp\nPoints", "CreateGroupOfCalcs", Properties.Resources.Create_PG),
+                        Ribbon.RibbonSpacer,
+                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.TextOnly,
+                            Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints"),
+                            Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns")
+                        )
+                    )
+                );
 
                 // Display tab in the RibbonControl for the user.
                 if (rtab.Panels.Count != 0)
                     ribbon.Tabs.Add(rtab);
-
-                // Let the user know this succeeded.
-                ACApplication.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Panel loaded successfully..." + Environment.NewLine);
-
             }
             #endregion
 
         #endregion
-
-        }
-    }
-
-    public class HelpSection
-    {
-        [CommandMethod("OpenCFDGFeedbackWindow")]
-        public void OpenFeedback()
-        {
-            var dialog = new CFDG.UI.FeedbackWindow(0, System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-            dialog.Show();
-        }
-    }
-
-    /// <summary>
-    /// RibbonButton click handler.
-    /// </summary>
-    public class RibbonButtonHandler : ICommand
-    {
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-#pragma warning disable CS0067 //command is never used
-        public event EventHandler CanExecuteChanged;
-#pragma warning restore CS0067
-
-        public void Execute(object parameter)
-
-        {
-            // Grab the command associated with the button
-            RibbonButton cmd = parameter as RibbonButton;
-
-            Document dwg = ACApplication.DocumentManager.MdiActiveDocument;
-
-            // Send the command to the application in the current document
-            dwg.SendStringToExecute(cmd.CommandParameter as string, true, false, true);
 
         }
     }
