@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace CFDG.API
 {
@@ -119,30 +114,30 @@ namespace CFDG.API
             switch (Format)
             {
                 case JobNumberFormats.ShortHyphan:
-                    {
-                        FormatNumber = formatted.Remove(0, 2).Insert(2, "-").Insert(5, "-");
-                        return true;
-                    }
+                {
+                    FormatNumber = formatted.Remove(0, 2).Insert(2, "-").Insert(5, "-");
+                    return true;
+                }
                 case JobNumberFormats.LongNoHyphan:
-                    {
-                        FormatNumber = formatted;
-                        return true;
-                    }
+                {
+                    FormatNumber = formatted;
+                    return true;
+                }
                 case JobNumberFormats.LongHyphan:
-                    {
-                        FormatNumber = formatted.Insert(4, "-").Insert(7, "-");
-                        return true;
-                    }
+                {
+                    FormatNumber = formatted.Insert(4, "-").Insert(7, "-");
+                    return true;
+                }
                 case JobNumberFormats.ShortNoHyphan:
-                    {
-                        FormatNumber = formatted.Remove(0, 2);
-                        return true;
-                    }
+                {
+                    FormatNumber = formatted.Remove(0, 2);
+                    return true;
+                }
                 default:
-                    {
-                        FormatNumber = null;
-                        return false;
-                    }
+                {
+                    FormatNumber = null;
+                    return false;
+                }
             }
 
         }
@@ -155,7 +150,7 @@ namespace CFDG.API
         public static string GetPath(string JobNumber)
         {
             //Base variables setup
-            string dir = (string)XML.ReadValue("general","defaultprojectpath");
+            string dir = (string)XML.ReadValue("general", "defaultprojectpath");
 
             //Error checks
             if (!TryParse(JobNumber, out string fullNumber, JobNumberFormats.LongHyphan))

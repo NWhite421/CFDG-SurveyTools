@@ -9,8 +9,8 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Civil.ApplicationServices;
 using Autodesk.Civil.DatabaseServices;
-using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using CFDG.API;
+using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD
 {
@@ -35,14 +35,14 @@ namespace CFDG.ACAD
             }
             Point3d endPnt = SelectPointInDoc(doc, "Select your end point: ", startPnt);
 
-            if (startPnt == new Point3d(-1,-1,-1) || endPnt == new Point3d(-1, -1, -1))
+            if (startPnt == new Point3d(-1, -1, -1) || endPnt == new Point3d(-1, -1, -1))
             {
                 return;
             }
 
             if (DistanceWindow == null)
             {
-                UI.SlopeDistance distanceWin = new UI.SlopeDistance(startPnt, endPnt);
+                var distanceWin = new UI.SlopeDistance(startPnt, endPnt);
                 DistanceWindow = distanceWin;
                 AcApp.ShowModelessWindow(distanceWin);
                 DistanceWindow.Closed += DistanceWindow_Closed;
@@ -62,28 +62,28 @@ namespace CFDG.ACAD
             }
             while (true)
             {
-                var length = GetStringFromUser(doc, "Enter the length of the measuredown: ");
+                string length = GetStringFromUser(doc, "Enter the length of the measuredown: ");
                 if (length == "" || !double.TryParse(length, out double lengthValue))
                 {
                     doc.Editor.WriteMessage("\nThe entered value was not valid, please try again.");
                     break;
                 }
-                var angle = GetStringFromUser(doc, "Enter the angle of the measuredown: ");
+                string angle = GetStringFromUser(doc, "Enter the angle of the measuredown: ");
                 if (angle == "" || !double.TryParse(angle, out double angleValue))
                 {
                     doc.Editor.WriteMessage("\nThe entered value was not valid, please try again.");
                     break;
                 }
-                var point = GetMeasureDownCoordinates(startPnt, lengthValue, angleValue);
+                Point3d point = GetMeasureDownCoordinates(startPnt, lengthValue, angleValue);
 
                 using (Transaction tr = doc.Database.TransactionManager.StartTransaction())
                 {
                     // Open the Block table record for read
-                    BlockTable acBlkTbl = tr.GetObject(doc.Database.BlockTableId, OpenMode.ForRead) as BlockTable;
+                    var acBlkTbl = tr.GetObject(doc.Database.BlockTableId, OpenMode.ForRead) as BlockTable;
 
                     // Open the Block table record Model space for write
-                    BlockTableRecord acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
-                    DBPoint acPoint = new DBPoint(point);
+                    var acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
+                    var acPoint = new DBPoint(point);
                     acPoint.SetDatabaseDefaults();
                     acBlkTblRec.AppendEntity(acPoint);
                     tr.AddNewlyCreatedDBObject(acPoint, true);
@@ -97,14 +97,14 @@ namespace CFDG.ACAD
         #region Selection Methods
         private static string GetStringFromUser(Document doc, string message)
         {
-            var AcEditor = doc.Editor;
+            Editor AcEditor = doc.Editor;
 
-            PromptStringOptions pso = new PromptStringOptions(message)
+            var pso = new PromptStringOptions(message)
             {
                 AllowSpaces = false
             };
 
-            var tr = AcEditor.GetString(pso);
+            PromptResult tr = AcEditor.GetString(pso);
             if (tr.Status == PromptStatus.Cancel)
             {
                 return "";
@@ -136,7 +136,7 @@ namespace CFDG.ACAD
 
             if (VerifyZenthValues(false))
             {
-                PromptPointOptions ppo = new PromptPointOptions($"\n{message}")
+                var ppo = new PromptPointOptions($"\n{message}")
                 {
                     AllowArbitraryInput = true,
                     AllowNone = false
@@ -148,7 +148,7 @@ namespace CFDG.ACAD
                     ppo.UseDashedLine = true;
                 }
 
-                var pr = AcEditor.GetPoint(ppo);
+                PromptPointResult pr = AcEditor.GetPoint(ppo);
                 if (pr.Status != PromptStatus.Cancel)
                 {
                     return pr.Value;
@@ -168,9 +168,9 @@ namespace CFDG.ACAD
         /// <returns>A 2D Vector</returns>
         private static Vector2d SelectAngleInDoc(Document doc, string message, Point3d basePoint, double distance)
         {
-            var AcEditor = doc.Editor;
+            Editor AcEditor = doc.Editor;
 
-            PromptAngleOptions pao = new PromptAngleOptions(message)
+            var pao = new PromptAngleOptions(message)
             {
                 AllowArbitraryInput = true,
                 AllowNone = true,
@@ -182,10 +182,10 @@ namespace CFDG.ACAD
                 UseDefaultValue = true
             };
 
-            var ar = AcEditor.GetAngle(pao);
+            PromptDoubleResult ar = AcEditor.GetAngle(pao);
             if (ar.Status == PromptStatus.Cancel)
             {
-                return new Vector2d(-1,-1);
+                return new Vector2d(-1, -1);
             }
             if (ar.Status == PromptStatus.Keyword)
             {
@@ -214,11 +214,11 @@ namespace CFDG.ACAD
             else
             {
                 //FEATURE: Enable temporary disablement of AutoCAD variables.
-                PromptKeywordOptions pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "disabled" : "enabled")}, Do you want to continue?");
+                var pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "disabled" : "enabled")}, Do you want to continue?");
                 pkwo.Keywords.Add("Yes");
                 pkwo.Keywords.Add("No");
                 pkwo.Keywords.Default = "Yes";
-                var KeywordResult = AcEditor.GetKeywords(pkwo);
+                PromptResult KeywordResult = AcEditor.GetKeywords(pkwo);
                 if (KeywordResult.StringResult == "No")
                 {
                     CheckForZeneth = false;
@@ -242,7 +242,7 @@ namespace CFDG.ACAD
             double drop = measures.SideA;
             double offset = measures.SideB;
 
-            var vector = SelectAngleInDoc(AcApp.DocumentManager.MdiActiveDocument, "Select an angle: ", top, offset);
+            Vector2d vector = SelectAngleInDoc(AcApp.DocumentManager.MdiActiveDocument, "Select an angle: ", top, offset);
 
             return new Point3d(top.X + vector.X, top.Y + vector.Y, top.Z - drop);
         }
@@ -414,12 +414,12 @@ namespace CFDG.ACAD
             Editor adEd = acDoc.Editor;
             CivilDocument cApp = Autodesk.Civil.ApplicationServices.CivilApplication.ActiveDocument;
 
-            List<string> points = new List<string> { };
+            var points = new List<string> { };
             string pointStr = "";
             string descriptionStr = "";
 
             // Get the purpose of the points
-            PromptStringOptions pStrOpts = new PromptStringOptions("\nEnter the purpose: ")
+            var pStrOpts = new PromptStringOptions("\nEnter the purpose: ")
             {
                 AllowSpaces = true
             };
@@ -430,7 +430,7 @@ namespace CFDG.ACAD
             string purpose = pRlt.StringResult;
 
             //Selection method
-            PromptKeywordOptions pKeyOpts = new PromptKeywordOptions("\nPlease select a method of point selection: ");
+            var pKeyOpts = new PromptKeywordOptions("\nPlease select a method of point selection: ");
             pKeyOpts.Keywords.Add("List");
             pKeyOpts.Keywords.Add("Selection");
             pKeyOpts.Keywords.Add("Descriptions");
@@ -442,57 +442,57 @@ namespace CFDG.ACAD
             switch (selType)
             {
                 case "List":
+                {
+                    pStrOpts = new PromptStringOptions("\nEnter the point range using dashes (-) and commas (,): ")
                     {
-                        pStrOpts = new PromptStringOptions("\nEnter the point range using dashes (-) and commas (,): ")
-                        {
-                            AllowSpaces = true
-                        };
-                        pRlt = adEd.GetString(pStrOpts);
-                        if (string.IsNullOrEmpty(pRlt.StringResult)) { adEd.WriteMessage("\nThe string entered was empty, please try again."); return; }
-                        pointStr = pRlt.StringResult;
+                        AllowSpaces = true
+                    };
+                    pRlt = adEd.GetString(pStrOpts);
+                    if (string.IsNullOrEmpty(pRlt.StringResult)) { adEd.WriteMessage("\nThe string entered was empty, please try again."); return; }
+                    pointStr = pRlt.StringResult;
 
-                        break;
-                    }
+                    break;
+                }
                 case "Selection":
+                {
+                    var tvs = new TypedValue[]
                     {
-                        TypedValue[] tvs = new TypedValue[]
-                        {
                             new TypedValue((int)DxfCode.Start, "AECC_COGO_POINT")
-                        };
-                        SelectionFilter selFltr = new SelectionFilter(tvs);
-                        PromptSelectionResult acSSPrompt;
-                        acSSPrompt = adEd.GetSelection(selFltr);
-                        if (acSSPrompt.Status == PromptStatus.Cancel) { adEd.WriteMessage("\nAction aborted."); return; }
-                        if (acSSPrompt.Value.Count < 1) { adEd.WriteMessage("\nThe selectiond was empty, please try again."); return; }
-                        using (Transaction tr = acDb.TransactionManager.StartTransaction())
+                    };
+                    var selFltr = new SelectionFilter(tvs);
+                    PromptSelectionResult acSSPrompt;
+                    acSSPrompt = adEd.GetSelection(selFltr);
+                    if (acSSPrompt.Status == PromptStatus.Cancel) { adEd.WriteMessage("\nAction aborted."); return; }
+                    if (acSSPrompt.Value.Count < 1) { adEd.WriteMessage("\nThe selectiond was empty, please try again."); return; }
+                    using (Transaction tr = acDb.TransactionManager.StartTransaction())
+                    {
+                        foreach (ObjectId obj in acSSPrompt.Value.GetObjectIds())
                         {
-                            foreach (var obj in acSSPrompt.Value.GetObjectIds())
-                            {
-                                CogoPoint pnt = (CogoPoint)obj.GetObject(OpenMode.ForRead);
-                                points.Add(pnt.PointNumber.ToString());
-                            }
-                            points.Sort();
+                            var pnt = (CogoPoint)obj.GetObject(OpenMode.ForRead);
+                            points.Add(pnt.PointNumber.ToString());
                         }
-                        pointStr = BeautifyPointList(points);
-                        break;
+                        points.Sort();
                     }
+                    pointStr = BeautifyPointList(points);
+                    break;
+                }
                 case "Descriptions":
+                {
+                    pStrOpts = new PromptStringOptions("\nEnter the raw descriptions including wildcards (*) and commas (,): ")
                     {
-                        pStrOpts = new PromptStringOptions("\nEnter the raw descriptions including wildcards (*) and commas (,): ")
-                        {
-                            AllowSpaces = true
-                        };
-                        pRlt = adEd.GetString(pStrOpts);
-                        if (string.IsNullOrEmpty(pRlt.StringResult)) { adEd.WriteMessage("\nThe string entered was empty, please try again."); return; }
-                        descriptionStr = pRlt.StringResult;
+                        AllowSpaces = true
+                    };
+                    pRlt = adEd.GetString(pStrOpts);
+                    if (string.IsNullOrEmpty(pRlt.StringResult)) { adEd.WriteMessage("\nThe string entered was empty, please try again."); return; }
+                    descriptionStr = pRlt.StringResult;
 
-                        break;
-                    }
+                    break;
+                }
                 default:
-                    {
-                        MessageBox.Show($"The selected input for GroupCalc Command was not valid: {pRlt.StringResult}");
-                        return;
-                    }
+                {
+                    MessageBox.Show($"The selected input for GroupCalc Command was not valid: {pRlt.StringResult}");
+                    return;
+                }
             }
             if (string.IsNullOrEmpty(pointStr) && string.IsNullOrEmpty(descriptionStr)) { adEd.WriteMessage("\nNo points were detected"); return; }
             using (Transaction tr = acDb.TransactionManager.StartTransaction())
@@ -500,7 +500,7 @@ namespace CFDG.ACAD
                 //Establish points
                 string groupName = $"[{DateTime.Now:MM-dd-yyyy}] {purpose.ToUpper()}";
 
-                StandardPointGroupQuery query = new StandardPointGroupQuery();
+                var query = new StandardPointGroupQuery();
                 if (selType == "Descriptions")
                 {
                     query.IncludeRawDescriptions = descriptionStr;
@@ -517,7 +517,7 @@ namespace CFDG.ACAD
                     return;
                 }
                 ObjectId groupId = pointGroups.Add(groupName);
-                PointGroup group = (PointGroup)groupId.GetObject(OpenMode.ForRead);
+                var group = (PointGroup)groupId.GetObject(OpenMode.ForRead);
                 group.SetQuery(query);
                 tr.Commit();
             }
@@ -527,14 +527,14 @@ namespace CFDG.ACAD
         [CommandMethod("CreateACPoints")]
         public static void CreateACPoint()
         {
-            var AcDoc = AcApp.DocumentManager.MdiActiveDocument;
-            var AcEdit = AcDoc.Editor;
-            var AcDb = AcDoc.Database;
-            var OSnapZ = Convert.ToBoolean(AcApp.TryGetSystemVariable("OSnapZ"));
+            Document AcDoc = AcApp.DocumentManager.MdiActiveDocument;
+            Editor AcEdit = AcDoc.Editor;
+            Database AcDb = AcDoc.Database;
+            bool OSnapZ = Convert.ToBoolean(AcApp.TryGetSystemVariable("OSnapZ"));
 
             if (OSnapZ)
             {
-                var ret = System.Windows.Forms.MessageBox.Show("Objects will be placed at elevation 0. Continue?", "OSnapZ is on", MessageBoxButtons.YesNo);
+                DialogResult ret = System.Windows.Forms.MessageBox.Show("Objects will be placed at elevation 0. Continue?", "OSnapZ is on", MessageBoxButtons.YesNo);
                 if (ret == DialogResult.No)
                 {
                     AcEdit.WriteMessage("Command exited per user input.");
@@ -545,7 +545,7 @@ namespace CFDG.ACAD
             AcEdit.WriteMessage("\nPlease select a point " + (OSnapZ ? "[2D]: " : "[3D]: "));
 
 
-            PromptPointOptions pointOptions = new PromptPointOptions("\nPlease select a point: ")
+            var pointOptions = new PromptPointOptions("\nPlease select a point: ")
             {
                 AllowNone = true,
                 UseBasePoint = false
@@ -555,23 +555,25 @@ namespace CFDG.ACAD
 
             while (continueCommand)
             {
-                var point = AcEdit.GetPoint(pointOptions);
+                PromptPointResult point = AcEdit.GetPoint(pointOptions);
                 if (point.Status == PromptStatus.Cancel)
                 {
                     break;
                 }
                 Point3d endPt = point.Value;
                 if (OSnapZ)
+                {
                     endPt = new Point3d(endPt.X, endPt.Y, 0);
+                }
 
                 using (Transaction tr = AcDb.TransactionManager.StartTransaction())
                 {
                     // Open the Block table record for read
-                    BlockTable acBlkTbl = tr.GetObject(AcDb.BlockTableId, OpenMode.ForRead) as BlockTable;
+                    var acBlkTbl = tr.GetObject(AcDb.BlockTableId, OpenMode.ForRead) as BlockTable;
 
                     // Open the Block table record Model space for write
-                    BlockTableRecord acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
-                    DBPoint acPoint = new DBPoint(endPt);
+                    var acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
+                    var acPoint = new DBPoint(endPt);
                     acPoint.SetDatabaseDefaults();
                     acBlkTblRec.AppendEntity(acPoint);
                     tr.AddNewlyCreatedDBObject(acPoint, true);

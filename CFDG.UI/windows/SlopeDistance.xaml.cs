@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Autodesk.AutoCAD.Geometry;
-using Autodesk.Civil.DatabaseServices;
 
 namespace CFDG.UI
 {
@@ -58,12 +48,12 @@ namespace CFDG.UI
 
         private void CalculateValues()
         {
-            var deltaX = Math.Abs(Convert.ToDouble(PntBEasting.Text) - Convert.ToDouble(PntAEasting.Text));
-            var deltaY = Math.Abs(Convert.ToDouble(PntBNorthing.Text) - Convert.ToDouble(PntANorthing.Text));
-            var deltaZ = Convert.ToDouble(PntAElevation.Text) - Convert.ToDouble(PntBElevation.Text);
+            double deltaX = Math.Abs(Convert.ToDouble(PntBEasting.Text) - Convert.ToDouble(PntAEasting.Text));
+            double deltaY = Math.Abs(Convert.ToDouble(PntBNorthing.Text) - Convert.ToDouble(PntANorthing.Text));
+            double deltaZ = Convert.ToDouble(PntAElevation.Text) - Convert.ToDouble(PntBElevation.Text);
 
-            var distance = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
-            var slope = deltaZ / distance;
+            double distance = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
+            double slope = deltaZ / distance;
 
             Distance.Text = string.Format("±{0:0.0}LF", Math.Round(distance, 1));
             Slope.Text = string.Format("{0:0.00}%", Math.Round(slope * 100, 2));

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Xml.Linq;
-using System.IO;
 
 namespace CFDG.API
 {
@@ -56,12 +51,12 @@ namespace CFDG.API
         {
             try
             {
-                var value = xmlElement
+                string value = xmlElement
                     .Element(category)
                     .Element(key)
                     .Attribute("value")
                     .Value;
-                var type = xmlElement
+                string type = xmlElement
                     .Element(category)
                     .Element(key)
                     .Attribute("type")
@@ -86,21 +81,21 @@ namespace CFDG.API
             switch (type.ToLower())
             {
                 case "int":
+                {
+                    if (int.TryParse(value, out int convert))
                     {
-                        if (int.TryParse(value, out int convert))
-                        {
-                            return convert;
-                        }
-                        return null;
+                        return convert;
                     }
+                    return null;
+                }
                 case "bool":
+                {
+                    if (bool.TryParse(value, out bool convert))
                     {
-                        if (bool.TryParse(value, out bool convert))
-                        {
-                            return convert;
-                        }
-                        return null;
+                        return convert;
                     }
+                    return null;
+                }
                 case "string":
                 default:
                     return value;

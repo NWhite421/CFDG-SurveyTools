@@ -1,10 +1,10 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace CFDG.ACAD.Functions
 {
@@ -20,7 +20,7 @@ namespace CFDG.ACAD.Functions
         /// <returns>Job number found or empty if not found.</returns>
         public static string GetJobNumber(Document document)
         {
-            var jobNumber = Path.GetFileNameWithoutExtension(document.Name);
+            string jobNumber = Path.GetFileNameWithoutExtension(document.Name);
             return Parse(jobNumber);
         }
 
@@ -31,7 +31,7 @@ namespace CFDG.ACAD.Functions
         /// <returns>Job number found or empty if not found.</returns>
         public static string GetJobNumber(string document)
         {
-            var jobNumber = Path.GetFileNameWithoutExtension(document);
+            string jobNumber = Path.GetFileNameWithoutExtension(document);
             return Parse(jobNumber);
         }
 
@@ -42,7 +42,7 @@ namespace CFDG.ACAD.Functions
         /// <returns>Job number or <paramref name="empty"/> string</returns>
         private static string Parse(string fileName)
         {
-            var match = Regex.Match(fileName, API.XML.ReadValue("General", "DefaultProjectNumber"));
+            dynamic match = Regex.Match(fileName, API.XML.ReadValue("General", "DefaultProjectNumber"));
             if (match.Success)
             {
                 return match.Value;
@@ -63,11 +63,11 @@ namespace CFDG.ACAD.Functions
         /// <returns>ImageSource of Bitmap</returns>
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
-            using (MemoryStream memory = new MemoryStream())
+            using (var memory = new MemoryStream())
             {
                 bitmap.Save(memory, ImageFormat.Png);
                 memory.Position = 0;
-                BitmapImage bitmapImage = new BitmapImage();
+                var bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();
                 bitmapImage.StreamSource = memory;
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
@@ -85,11 +85,14 @@ namespace CFDG.ACAD.Functions
         public static BitmapImage BitmapToImageSource(params Bitmap[] bitmaps)
         {
             if (bitmaps.Length == 0)
+            {
                 return new BitmapImage();
+            }
+
             int width = bitmaps.Max(map => map.Width);
             int height = bitmaps.Max(map => map.Height);
-            Bitmap result = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(result))
+            var result = new Bitmap(width, height);
+            using (var g = Graphics.FromImage(result))
             {
                 foreach (Bitmap map in bitmaps)
                 {

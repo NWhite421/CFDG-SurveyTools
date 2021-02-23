@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Windows.Input;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Windows;
-using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
-using CFDG.API;
 using CFDG.ACAD.Functions;
-using Autodesk.AutoCAD.StatusBar;
+using CFDG.API;
+using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD
 {
@@ -94,7 +92,7 @@ namespace CFDG.ACAD
         /// <summary>
         /// Large placeholder button (vertical)
         /// </summary>
-        readonly RibbonButton ButtonLarge = new RibbonButton
+        private readonly RibbonButton ButtonLarge = new RibbonButton
         {
             Text = "PLACEHOLDER",
             ShowImage = true,
@@ -110,7 +108,7 @@ namespace CFDG.ACAD
         /// <summary>
         /// Small placeholder button (horizontal)
         /// </summary>
-        readonly RibbonButton ButtonSmall = new RibbonButton
+        private readonly RibbonButton ButtonSmall = new RibbonButton
         {
             Text = "PLACEHOLDER",
             ShowImage = false,
@@ -129,7 +127,7 @@ namespace CFDG.ACAD
         [CommandMethod("PLACEHOLDER", CommandFlags.Transparent)]
         public void PlaceholderCommand()
         {
-            var doc = ACApplication.DocumentManager.MdiActiveDocument;
+            Document doc = ACApplication.DocumentManager.MdiActiveDocument;
             Editor ed = doc.Editor;
             ed.WriteMessage("Command not implimented yet..." + Environment.NewLine);
         }
@@ -143,7 +141,7 @@ namespace CFDG.ACAD
         {
             //TODO: Fix tab name to include "Survey"
             //Get tab name
-            string tabName = (string)XML.ReadValue("General","CompanyAbbreviation");
+            string tabName = (string)XML.ReadValue("General", "CompanyAbbreviation");
 
             //Add Ribbon
             RibbonControl ribbon = ComponentManager.Ribbon;
@@ -190,11 +188,13 @@ namespace CFDG.ACAD
 
                 // Display tab in the RibbonControl for the user.
                 if (rtab.Panels.Count != 0)
+                {
                     ribbon.Tabs.Add(rtab);
+                }
             }
             #endregion
 
-        #endregion
+            #endregion
 
         }
     }

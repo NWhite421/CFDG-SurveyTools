@@ -1,13 +1,8 @@
 using System;
 using System.Windows.Input;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.EditorInput;
-using Autodesk.AutoCAD.Runtime;
 using Autodesk.Windows;
 using ACApplication = Autodesk.AutoCAD.ApplicationServices.Application;
-using CFDG.API;
-using CFDG.ACAD.Functions;
-using Autodesk.AutoCAD.StatusBar;
 
 namespace CFDG.ACAD
 {
@@ -25,7 +20,7 @@ namespace CFDG.ACAD
 
         {
             // Grab the command associated with the button
-            RibbonButton cmd = parameter as RibbonButton;
+            var cmd = parameter as RibbonButton;
 
             Document dwg = ACApplication.DocumentManager.MdiActiveDocument;
 

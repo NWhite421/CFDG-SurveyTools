@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.EditorInput;
-using Autodesk.AutoCAD.Geometry;
-using Autodesk.AutoCAD.Runtime;
-using Autodesk.Civil.ApplicationServices;
-using Autodesk.Civil.DatabaseServices;
-using System.Reflection;
 using System.Diagnostics;
-using Autodesk.AutoCAD.Colors;
-using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
+using System.IO;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Runtime;
 using CFDG.ACAD.Functions;
+using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD
 {
@@ -31,13 +22,15 @@ namespace CFDG.ACAD
         /// <param name="option">The sub-folder to open.</param>
         private static void OpenFolder(string option)
         {
-            var doc = AcApp.DocumentManager.MdiActiveDocument;
+            Autodesk.AutoCAD.ApplicationServices.Document doc = AcApp.DocumentManager.MdiActiveDocument;
             Editor ed = doc.Editor;
 
             // determines the job number of the active drawing.
-            var jobNumber = DocumentProperties.GetJobNumber(doc);
+            string jobNumber = DocumentProperties.GetJobNumber(doc);
             if (string.IsNullOrEmpty(jobNumber))
+            {
                 return;
+            }
 
             // Gets the base path of the project and exits if it doesn't exist.
             string jobPath = API.JobNumber.GetPath(jobNumber);
@@ -51,20 +44,20 @@ namespace CFDG.ACAD
             switch (option.ToLower())
             {
                 case "comp":
-                    {
-                        jobPath += @"\Comp";
-                        break;
-                    }
+                {
+                    jobPath += @"\Comp";
+                    break;
+                }
                 case "submittal":
-                    {
-                        jobPath += @"\Submittal";
-                        break;
-                    }
+                {
+                    jobPath += @"\Submittal";
+                    break;
+                }
                 case "fielddata":
-                    {
-                        jobPath += @"\Field Data";
-                        break;
-                    }
+                {
+                    jobPath += @"\Field Data";
+                    break;
+                }
                 default:
                     break;
             }
@@ -121,10 +114,10 @@ namespace CFDG.ACAD
         // FIX: Refactor
 
         // FIX: Refactor and unify with similar functions.
-        
+
 
         // FIX: Refactor and unify with similar functions.
-        
+
         #endregion
     }
 }

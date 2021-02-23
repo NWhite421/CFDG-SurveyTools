@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.UI", "CFDG.UI\CFDG.UI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFDG.API.Tests", "CFDG.API.Tests\CFDG.API.Tests.csproj", "{0ADCD5D3-2DB7-410D-BE40-28B9718D217D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8CD37EF7-FD5B-44FA-A0CC-40CCE40005E2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (ACAD 19)|Any CPU = Debug (ACAD 19)|Any CPU

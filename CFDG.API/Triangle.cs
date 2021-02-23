@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CFDG.API
 {
@@ -16,7 +12,7 @@ namespace CFDG.API
             }
 
             SideC = hypotenuse;
-            AngleA = angle;
+            AngleA = (180 / Math.PI) * angle;
             AngleB = 180 - (AngleA + 90);
             SideA = Math.Cos(angle) * hypotenuse;
             SideB = Math.Sin(angle) * hypotenuse;
@@ -37,15 +33,5 @@ namespace CFDG.API
         public double AngleA { get; set; }
         public double AngleB { get; set; }
         public double AngleC { get { return 90; } }
-
-        private double ConvertToRadian(double degrees)
-        {
-            return (Math.PI / 180) * degrees;
-        }
-
-        private double ConvertToDegrees(double radian)
-        {
-            return (180 / Math.PI) * radian;
-        }
     }
 }

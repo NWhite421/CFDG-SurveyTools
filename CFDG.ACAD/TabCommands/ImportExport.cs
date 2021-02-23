@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
@@ -51,7 +49,7 @@ namespace CFDG.ACAD
                     Application.SetSystemVariable("BACKGROUNDPLOT", 0);
 
                     Publisher publisher = Application.Publisher;
-                    PlotProgressDialog plotDlg = new PlotProgressDialog(false, this.sheetNum, true);
+                    var plotDlg = new PlotProgressDialog(false, this.sheetNum, true);
                     publisher.PublishDsd(this.dsdFile, plotDlg);
                     plotDlg.Destroy();
                     File.Delete(this.dsdFile);
@@ -73,13 +71,18 @@ namespace CFDG.ACAD
         // Creates the DSD file from a template (default options)
         private bool TryCreateDSD()
         {
-            using (DsdData dsd = new DsdData())
+            using (var dsd = new DsdData())
             using (DsdEntryCollection dsdEntries = CreateDsdEntryCollection(this.layouts))
             {
-                if (dsdEntries == null || dsdEntries.Count <= 0) return false;
+                if (dsdEntries == null || dsdEntries.Count <= 0)
+                {
+                    return false;
+                }
 
                 if (!Directory.Exists(this.outputDir))
+                {
                     Directory.CreateDirectory(this.outputDir);
+                }
 
                 this.sheetNum = dsdEntries.Count;
 
@@ -101,11 +104,11 @@ namespace CFDG.ACAD
         // Creates an entry collection (one per layout) for the DSD file
         private DsdEntryCollection CreateDsdEntryCollection(IEnumerable<Layout> layouts)
         {
-            DsdEntryCollection entries = new DsdEntryCollection();
+            var entries = new DsdEntryCollection();
 
             foreach (Layout layout in layouts)
             {
-                DsdEntry dsdEntry = new DsdEntry();
+                var dsdEntry = new DsdEntry();
                 dsdEntry.DwgName = this.dwgFile;
                 dsdEntry.Layout = layout.LayoutName;
                 dsdEntry.Title = Path.GetFileNameWithoutExtension(this.dwgFile) + "-" + layout.LayoutName;
@@ -123,8 +126,8 @@ namespace CFDG.ACAD
 
             dsd.WriteDsd(tmpFile);
 
-            using (StreamReader reader = new StreamReader(tmpFile, Encoding.Default))
-            using (StreamWriter writer = new StreamWriter(this.dsdFile, false, Encoding.Default))
+            using (var reader = new StreamReader(tmpFile, Encoding.Default))
+            using (var writer = new StreamWriter(this.dsdFile, false, Encoding.Default))
             {
                 while (!reader.EndOfStream)
                 {
@@ -201,27 +204,27 @@ namespace CFDG.ACAD
         [CommandMethod("PlotPages")]
         public static void PlotPages()
         {
-            var doc = ACApp.DocumentManager.MdiActiveDocument;
-            var ACEditor = doc.Editor;
-            var ACDatabase = doc.Database;
-            List<Layout> layouts = new List<Layout> { };
-            var layoutMngr = LayoutManager.Current;
+            Document doc = ACApp.DocumentManager.MdiActiveDocument;
+            Editor ACEditor = doc.Editor;
+            Database ACDatabase = doc.Database;
+            var layouts = new List<Layout> { };
+            LayoutManager layoutMngr = LayoutManager.Current;
 
-            using (var trans = ACDatabase.TransactionManager.StartTransaction())
+            using (Transaction trans = ACDatabase.TransactionManager.StartTransaction())
             {
                 var layoutDic = trans.GetObject(ACDatabase.LayoutDictionaryId, OpenMode.ForRead, false) as DBDictionary;
-                foreach (var entry in layoutDic)
+                foreach (DBDictionaryEntry entry in layoutDic)
                 {
-                    var layoutID = entry.Value;
-                    Layout layout = trans.GetObject(layoutID, OpenMode.ForRead) as Layout;
+                    ObjectId layoutID = entry.Value;
+                    var layout = trans.GetObject(layoutID, OpenMode.ForRead) as Layout;
                     layouts.Add(layout);
                 }
 
                 trans.Commit();
             }
 
-            UI.PlotPageDialog dialog = new UI.PlotPageDialog(layouts);
-            var result = Application.ShowModalWindow(dialog);
+            var dialog = new UI.PlotPageDialog(layouts);
+            bool? result = Application.ShowModalWindow(dialog);
             if (!result.Value)
             {
                 ACEditor.WriteMessage($"{Environment.NewLine}The Plot Pages dialog was cancelled by the user.");
