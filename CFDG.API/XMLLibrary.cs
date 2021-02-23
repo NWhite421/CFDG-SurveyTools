@@ -26,7 +26,7 @@ namespace CFDG.API
         /// <param name="category">Setting category</param>
         /// <param name="key">Key name</param>
         /// <returns>Value or null if not found.</returns>
-        public static object ReadValue(string category, string key)
+        public static dynamic ReadValue(string category, string key)
         {
             if (xmlElement == null)
             {
@@ -78,7 +78,7 @@ namespace CFDG.API
             }
         }
 
-        private static object ConvertStringToType(string[] content)
+        private static dynamic ConvertStringToType(string[] content)
         {
             string value = content[0];
             string type = content[1];

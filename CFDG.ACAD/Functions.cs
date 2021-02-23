@@ -30,7 +30,7 @@ namespace CFDG.ACAD.Functions
         /// <returns></returns>
         private static string Parse(string fileName)
         {
-            var match = Regex.Match(fileName, API.INI.GetAppConfigSetting("General", "DefaultProjectNumber"));
+            var match = Regex.Match(fileName, API.XML.ReadValue("General", "DefaultProjectNumber"));
             if (match.Success)
             {
                 return match.Value;

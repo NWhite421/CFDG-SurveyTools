@@ -263,12 +263,27 @@ namespace HNH.ACAD
                 ExportGroup.LargeImage = Imaging.BitmapToImageSource(CFDG.ACAD.Properties.Resources.Export_PG);
                 rps.Items.Add(ExportGroup);
 
+                var spacer = new RibbonSeparator()
+                {
+                    SeparatorStyle = RibbonSeparatorStyle.Spacer
+                };
+
+                rps.Items.Add(spacer);
+
+                RibbonRowPanel rrp = new RibbonRowPanel();
                
                 btn = ButtonSmall.Clone() as RibbonButton;
                 btn.Text = "Slope From Points";
-                btn.CommandParameter = "GETSLOPEFROMPOINTS ";
-                rps.Items.Add(btn);
+                btn.CommandParameter = "SlopeFromPoints ";
+                rrp.Items.Add(btn);
+                rrp.Items.Add(new RibbonRowBreak());
 
+                btn = ButtonSmall.Clone() as RibbonButton;
+                btn.Text = "Create Measure Down";
+                btn.CommandParameter = "Measuredowns ";
+                rrp.Items.Add(btn);
+
+                rps.Items.Add(rrp);
 
                 if (rps.Items.Count != 0)
                     rtab.Panels.Add(rp);

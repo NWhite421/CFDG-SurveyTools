@@ -155,7 +155,7 @@ namespace CFDG.API
         public static string GetPath(string JobNumber)
         {
             //Base variables setup
-            string dir = INI.GetAppConfigSetting("General", "DefaultProjectPath");
+            string dir = (string)XML.ReadValue("general","defaultprojectpath");
 
             //Error checks
             if (!TryParse(JobNumber, out string fullNumber, JobNumberFormats.LongHyphan))
