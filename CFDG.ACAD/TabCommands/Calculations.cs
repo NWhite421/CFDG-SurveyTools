@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -16,24 +17,22 @@ namespace CFDG.ACAD
 {
     public class Calculations
     {
-        #region Variables
+        #region Public Variables
         private static UI.SlopeDistance DistanceWindow;
-        private static bool CheckForZeneth;
         #endregion
 
         #region AutoCAD Commands
 
-        [CommandMethod("SlopeFromPoints")]
+        [CommandMethod("SlopeFromPoints", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
         public static void GetSlopeFromPoints()
         {
-            CheckForZeneth = true;
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            Point3d startPnt = SelectPointInDoc(doc, "Select your start point: ");
+            Point3d startPnt = UserInput.SelectPointInDoc("Select your start point: ");
             if (startPnt == new Point3d(-1, -1, -1))
             {
                 return;
             }
-            Point3d endPnt = SelectPointInDoc(doc, "Select your end point: ", startPnt);
+            Point3d endPnt = UserInput.SelectPointInDoc("Select your end point: ", startPnt);
 
             if (startPnt == new Point3d(-1, -1, -1) || endPnt == new Point3d(-1, -1, -1))
             {
@@ -50,25 +49,24 @@ namespace CFDG.ACAD
             DistanceWindow.Calculate(startPnt, endPnt);
         }
 
-        [CommandMethod("Measuredowns", CommandFlags.Modal)]
+        [CommandMethod("Measuredowns", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
         public static void CreateMeasureDownPoints()
         {
-            CheckForZeneth = true;
             Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            Point3d startPnt = SelectPointInDoc(doc, "Select your base point: ");
+            Point3d startPnt = UserInput.SelectPointInDoc("Select your base point: ");
             if (startPnt == new Point3d(-1, -1, -1))
             {
                 return;
             }
             while (true)
             {
-                string length = GetStringFromUser(doc, "Enter the length of the measuredown: ");
+                string length = UserInput.GetStringFromUser("Enter the length of the measuredown: ");
                 if (length == "" || !double.TryParse(length, out double lengthValue))
                 {
                     doc.Editor.WriteMessage("\nThe entered value was not valid, please try again.");
                     break;
                 }
-                string angle = GetStringFromUser(doc, "Enter the angle of the measuredown: ");
+                string angle = UserInput.GetStringFromUser("Enter the angle of the measuredown: ");
                 if (angle == "" || !double.TryParse(angle, out double angleValue))
                 {
                     doc.Editor.WriteMessage("\nThe entered value was not valid, please try again.");
@@ -92,146 +90,16 @@ namespace CFDG.ACAD
             }
         }
 
+        
         #endregion
 
-        #region Selection Methods
-        private static string GetStringFromUser(Document doc, string message)
+        public static (Vector2d, double) GetVectorsFromAngle(double baseAngle, double angle, double distance)
         {
-            Editor AcEditor = doc.Editor;
+            double newAngle = baseAngle + angle;
+            var measures = new Triangle(distance, newAngle);
 
-            var pso = new PromptStringOptions(message)
-            {
-                AllowSpaces = false
-            };
-
-            PromptResult tr = AcEditor.GetString(pso);
-            if (tr.Status == PromptStatus.Cancel)
-            {
-                return "";
-            }
-            return tr.StringResult;
+            return (new Vector2d(measures.SideA, measures.SideB), newAngle);
         }
-
-        /// <summary>
-        /// Select a point in the current document (3D)
-        /// </summary>
-        /// <param name="doc">Current document</param>
-        /// <param name="message">Message for the prompt</param>
-        /// <returns>A 3D point</returns>
-        private static Point3d SelectPointInDoc(Document doc, string message)
-        {
-            return SelectPointInDoc(doc, message, new Point3d(-1, -1, -1));
-        }
-
-        /// <summary>
-        /// Select a point in the current document (3D)
-        /// </summary>
-        /// <param name="doc">Current document</param>
-        /// <param name="message">Message for the prompt</param>
-        /// <param name="basePoint">A base point for reference</param>
-        /// <returns>A 3D point</returns>
-        private static Point3d SelectPointInDoc(Document doc, string message, Point3d basePoint)
-        {
-            Editor AcEditor = doc.Editor;
-
-            if (VerifyZenthValues(false))
-            {
-                var ppo = new PromptPointOptions($"\n{message}")
-                {
-                    AllowArbitraryInput = true,
-                    AllowNone = false
-                };
-                if (basePoint != new Point3d(-1, -1, -1))
-                {
-                    ppo.BasePoint = basePoint;
-                    ppo.UseBasePoint = true;
-                    ppo.UseDashedLine = true;
-                }
-
-                PromptPointResult pr = AcEditor.GetPoint(ppo);
-                if (pr.Status != PromptStatus.Cancel)
-                {
-                    return pr.Value;
-                }
-                return new Point3d(-1, -1, -1);
-            }
-            return new Point3d(-1, -1, -1);
-        }
-
-        /// <summary>
-        /// Select a angle in the current document
-        /// </summary>
-        /// <param name="doc">Current document</param>
-        /// <param name="message">Message for the prompt</param>
-        /// <param name="basePoint">A base point for reference</param>
-        /// <param name="distance">The distance to break apart.</param>
-        /// <returns>A 2D Vector</returns>
-        private static Vector2d SelectAngleInDoc(Document doc, string message, Point3d basePoint, double distance)
-        {
-            Editor AcEditor = doc.Editor;
-
-            var pao = new PromptAngleOptions(message)
-            {
-                AllowArbitraryInput = true,
-                AllowNone = true,
-                AllowZero = true,
-                BasePoint = basePoint,
-                UseBasePoint = true,
-                UseDashedLine = true,
-                DefaultValue = 0,
-                UseDefaultValue = true
-            };
-
-            PromptDoubleResult ar = AcEditor.GetAngle(pao);
-            if (ar.Status == PromptStatus.Cancel)
-            {
-                return new Vector2d(-1, -1);
-            }
-            if (ar.Status == PromptStatus.Keyword)
-            {
-                return new Vector2d(-2, -2);
-            }
-
-            var measures = new Triangle(distance, ar.Value, true);
-
-            return new Vector2d(measures.SideA, measures.SideB);
-        }
-        #endregion
-
-
-        private static bool VerifyZenthValues(bool preferredValue)
-        {
-            Document doc = AcApp.DocumentManager.MdiActiveDocument;
-            Editor AcEditor = doc.Editor;
-            Database AcDatabase = doc.Database;
-            bool OSnapZ = Convert.ToBoolean(AcApp.TryGetSystemVariable("OSnapZ"));
-
-            if (preferredValue == OSnapZ || !CheckForZeneth)
-            {
-                CheckForZeneth = false;
-                return true;
-            }
-            else
-            {
-                //FEATURE: Enable temporary disablement of AutoCAD variables.
-                var pkwo = new PromptKeywordOptions($"OSnapZ is {(preferredValue ? "disabled" : "enabled")}, Do you want to continue?");
-                pkwo.Keywords.Add("Yes");
-                pkwo.Keywords.Add("No");
-                pkwo.Keywords.Default = "Yes";
-                PromptResult KeywordResult = AcEditor.GetKeywords(pkwo);
-                if (KeywordResult.StringResult == "No")
-                {
-                    CheckForZeneth = false;
-                    return false;
-                }
-                else
-                {
-                    CheckForZeneth = false;
-                    return true;
-                }
-            }
-        }
-
 
         private static Point3d GetMeasureDownCoordinates(Point3d top, double distance, double angle)
         {
@@ -242,7 +110,7 @@ namespace CFDG.ACAD
             double drop = measures.SideA;
             double offset = measures.SideB;
 
-            Vector2d vector = SelectAngleInDoc(AcApp.DocumentManager.MdiActiveDocument, "Select an angle: ", top, offset);
+            Vector2d vector = UserInput.SelectAngleInDoc("Select an angle: ", top, offset);
 
             return new Point3d(top.X + vector.X, top.Y + vector.Y, top.Z - drop);
         }
@@ -580,16 +448,6 @@ namespace CFDG.ACAD
                     tr.Commit();
                 }
             }
-        }
-    }
-
-    public static class PointGroupExtensions
-    {
-        public static List<CogoPoint> GetCogoPoints(this PointGroup ptGroup)
-        {
-            CivilDocument civDoc = CivilApplication.ActiveDocument;
-            return (from p in ptGroup.GetPointNumbers()
-                    select civDoc.CogoPoints.GetPointByPointNumber(p).GetObject(OpenMode.ForRead) as CogoPoint).ToList();
         }
     }
 }

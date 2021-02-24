@@ -132,7 +132,8 @@ namespace CFDG.ACAD
                         Ribbon.RibbonSpacer,
                         Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.TextOnly,
                             Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints"),
-                            Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns")
+                            Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns"),
+                            Ribbon.CreateSmallButton("Footprint","Footprint")
                         )
                     )
                 );

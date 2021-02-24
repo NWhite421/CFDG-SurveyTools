@@ -116,8 +116,10 @@
     <Compile Include="Ribbon\Ribbon.cs" />
     <Compile Include="TabCommands\Calculations.cs" />
     <Compile Include="Functions.cs" />
+    <Compile Include="TabCommands\Calculations\Footprint.cs" />
     <Compile Include="TabCommands\ImportExport.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="TabCommands\PointGroupExtensions.cs" />
     <Compile Include="TabCommands\ProjectManagement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -126,6 +128,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Ribbon\RibbonButtonHandler.cs" />
+    <Compile Include="UserInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -196,6 +199,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

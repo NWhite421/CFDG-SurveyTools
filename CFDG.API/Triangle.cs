@@ -1,4 +1,5 @@
 ﻿using System;
+using Autodesk.AutoCAD.Geometry;
 
 namespace CFDG.API
 {
@@ -25,6 +26,15 @@ namespace CFDG.API
             AngleB = 180 - (AngleA + 90);
             SideA = Math.Cos((Math.PI / 180) * angle) * hypotenuse;
             SideB = Math.Sin((Math.PI / 180) * angle) * hypotenuse;
+        }
+
+        public Triangle(Point2d startPoint, Point2d endPoint)
+        {
+            SideA = endPoint.X - startPoint.X;
+            SideB = endPoint.Y - startPoint.Y;
+            SideC = Math.Sqrt((SideA * SideA) + (SideB + SideB));
+            AngleA = (180 / Math.PI) * (Math.Asin((Math.PI / 2) / SideC) * SideA);
+            AngleB = 180 - (AngleA + 90);
         }
 
         public double SideA { get; set; }
