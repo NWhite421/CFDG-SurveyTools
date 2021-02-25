@@ -130,10 +130,10 @@ namespace CFDG.ACAD
                     Ribbon.CreatePanel("Computations", "Computations",
                         Ribbon.CreateLargeButton("Group Comp\nPoints", "GroupPoints", Properties.Resources.Create_PG),
                         Ribbon.RibbonSpacer,
-                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.TextOnly,
-                            Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints"),
-                            Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns"),
-                            Ribbon.CreateSmallButton("Footprint", "Footprint")
+                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.ImageOnly,
+                            Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints","Calculate slope by selecting two points.", Properties.Resources.SlopeByPoints),
+                            Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns", "Create points using slope distance from a reference point."),
+                            Ribbon.CreateSmallButton("Footprint", "Footprint","Draw a polyline by entering positive or negative values and angles.")
                         )
                     )
                 );

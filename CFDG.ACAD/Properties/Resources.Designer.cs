@@ -213,6 +213,16 @@ namespace CFDG.ACAD.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SlopeByPoints {
+            get {
+                object obj = ResourceManager.GetObject("SlopeByPoints", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap xref_drawing {
             get {
                 object obj = ResourceManager.GetObject("xref drawing", resourceCulture);

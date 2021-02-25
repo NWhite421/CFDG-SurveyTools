@@ -59,6 +59,34 @@ namespace CFDG.ACAD
         /// </summary>
         /// <param name="text">Display text</param>
         /// <param name="command">Command to execute</param>
+        /// <param name="description">Description of command.</param>
+        /// <returns>small horizontal RibbonButton</returns>
+        public static RibbonButton CreateSmallButton(string text, string command, string description)
+        {
+            RibbonButton btn = CreateSmallButton(text, command, Properties.Resources.placehold_16);
+            btn.Description = description;
+            return btn;
+        }
+        /// <summary>
+        /// Create a small horizontal button
+        /// </summary>
+        /// <param name="text">Display text</param>
+        /// <param name="command">Command to execute</param>
+        /// <param name="description">Description of command.</param>
+        /// <param name="images">List of Bitmap Images</param>        /// 
+        /// <returns>small horizontal RibbonButton</returns>
+        public static RibbonButton CreateSmallButton(string text, string command, string description, params System.Drawing.Bitmap[] images)
+        {
+            RibbonButton btn = CreateSmallButton(text, command, images);
+            btn.Description = description;
+            return btn;
+        }
+
+        /// <summary>
+        /// Create a small horizontal button
+        /// </summary>
+        /// <param name="text">Display text</param>
+        /// <param name="command">Command to execute</param>
         /// <param name="images">List of Bitmap Images</param>
         /// <returns>small horizontal RibbonButton</returns>
         public static RibbonButton CreateSmallButton(string text, string command, params System.Drawing.Bitmap[] images)
