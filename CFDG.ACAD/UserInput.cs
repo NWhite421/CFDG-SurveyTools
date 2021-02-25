@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
-using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 using CFDG.API;
+using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD
 {
@@ -127,8 +123,27 @@ namespace CFDG.ACAD
 
             return (180 / Math.PI) * ar.Value;
         }
-        #endregion
 
+        public static void AddPointToDrawing(Point3d point, string blockTableRecordSpace)
+        {
+            (Document AcDocument, _) = GetCurrentDocSpace();
+            Database AcDatabase = AcDocument.Database;
+            using (Transaction trans = AcDatabase.TransactionManager.StartTransaction())
+            {
+                // Open the Block table record for read
+                var acBlkTbl = trans.GetObject(AcDatabase.BlockTableId, OpenMode.ForRead) as BlockTable;
+
+                // Open the Block table record Model space for write
+                var acBlkTblRec = trans.GetObject(acBlkTbl[blockTableRecordSpace], OpenMode.ForWrite) as BlockTableRecord;
+
+                DBPoint pointObj = new DBPoint(point);
+                pointObj.SetDatabaseDefaults();
+                acBlkTblRec.AppendEntity(pointObj);
+                trans.AddNewlyCreatedDBObject(pointObj, true);
+                trans.Commit();
+            }
+        }
+        #endregion
 
         #region Private Methods
 

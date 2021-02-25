@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
@@ -12,10 +9,34 @@ using Autodesk.AutoCAD.Runtime;
 using CFDG.API;
 using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
-namespace CFDG.ACAD
+namespace CFDG.ACAD.CommandClasses.Calculations
 {
-    public class Footprint
+    public class Footprint : ICommandMethod
     {
+        [CommandMethod("Footprint", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
+        public void InitialCommand()
+        {
+
+            Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
+            Editor AcEditor = AcDocument.Editor;
+            Point3d startPoint = UserInput.SelectPointInDoc("Select a start point: ");
+            double baseAngle = UserInput.SelectAngleInDoc("Select a start angle: ", startPoint);
+
+            (Polyline line, Point2d currentPoint) = EstablishLine(startPoint, baseAngle);
+            while (true)
+            {
+                (Point2d newPoint, double newAngle) = AddSide(line, baseAngle, currentPoint);
+                if (newAngle == -1)
+                {
+                    break;
+                }
+                currentPoint = newPoint;
+                baseAngle = newAngle;
+            }
+            Triangle triangle = new Triangle(new Point2d(startPoint.X, startPoint.Y), currentPoint);
+            AcEditor.WriteMessage($"\nClosure: {triangle.SideC}\tDeltaX: {triangle.SideA}\tDeltaY: {triangle.SideB}\n");
+        }
+
         private static (Polyline, Point2d) EstablishLine(Point3d start, double angle)
         {
             Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
@@ -29,13 +50,13 @@ namespace CFDG.ACAD
                 string distanceStr = UserInput.GetStringFromUser("Enter a distance for the side: ");
                 if (string.IsNullOrEmpty(distanceStr))
                 {
-                    return (null, new Point2d(-1,-1));
+                    return (null, new Point2d(-1, -1));
                 }
                 Match match = Regex.Match(distanceStr, @"^\d+(.\d+)?$");
                 if (!match.Success)
                 {
                     AcEditor.WriteMessage($"\n{ distanceStr } is not a valid input. Please try again.\n");
-                } 
+                }
                 else
                 {
                     distance = double.Parse(distanceStr);
@@ -114,7 +135,7 @@ namespace CFDG.ACAD
                         AcDbTransaction.Commit();
                     }
                     return (currentPoint, angle);
-                } 
+                }
             }
         }
 
@@ -126,28 +147,5 @@ namespace CFDG.ACAD
             return (new Vector2d(measures.SideA, measures.SideB), newAngle);
         }
 
-        [CommandMethod("Footprint", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
-        public static void EntryCommand()
-        {
-
-            Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
-            Editor AcEditor = AcDocument.Editor;
-            Point3d startPoint = UserInput.SelectPointInDoc("Select a start point: ");
-            double baseAngle = UserInput.SelectAngleInDoc("Select a start angle: ", startPoint);
-
-            (Polyline line, Point2d currentPoint) = EstablishLine(startPoint, baseAngle);
-            while (true)
-            {
-                (Point2d newPoint, double newAngle) = AddSide(line, baseAngle, currentPoint);
-                if (newAngle == -1)
-                {
-                    break;
-                }
-                currentPoint = newPoint;
-                baseAngle = newAngle;
-            }
-            Triangle triangle = new Triangle(new Point2d(startPoint.X, startPoint.Y), currentPoint);
-            AcEditor.WriteMessage($"\nClosure: {triangle.SideC}\tDeltaX: {triangle.SideA}\tDeltaY: {triangle.SideB}\n");
-        }
     }
 }

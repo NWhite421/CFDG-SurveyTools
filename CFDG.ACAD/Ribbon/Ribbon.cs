@@ -1,7 +1,6 @@
-using System;
+using System.Windows.Controls;
 using Autodesk.Windows;
 using CFDG.ACAD.Functions;
-using System.Windows.Controls;
 
 namespace CFDG.ACAD
 {

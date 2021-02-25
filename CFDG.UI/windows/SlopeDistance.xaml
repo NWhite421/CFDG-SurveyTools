@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:CFDG.UI"
         mc:Ignorable="d"
         Title="Slope Calculations" Height="230" Width="400"
-        ResizeMode="NoResize" ShowInTaskbar="False" Background="#253a5c" Foreground="White">
+        ResizeMode="NoResize" ShowInTaskbar="False" Background="white" Foreground="black">
     <Window.Resources>
         <Style TargetType="TextBox">
-            <Setter Property="Background" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0 0 0 1"/>
             <Setter Property="BorderBrush" Value="DarkGray"/>
             <EventSetter Event="TextChanged" Handler="OnTextboxChange"/>
         </Style>
@@ -36,7 +36,7 @@
             <TextBox x:Name="PntAEasting" Text="000000.00" FontSize="16"/>
             <TextBlock Text="Northing:"/>
             <TextBox x:Name="PntANorthing" Text="0000000.00" FontSize="16"/>
-            <TextBlock Text="Easting:"/>
+            <TextBlock Text="Elevation:"/>
             <TextBox x:Name="PntAElevation" Text="000.00" FontSize="16"/>
         </StackPanel>
 
@@ -48,7 +48,7 @@
             <TextBox x:Name="PntBEasting" Text="000000.00" FontSize="16"/>
             <TextBlock Text="Northing:"/>
             <TextBox x:Name="PntBNorthing" Text="0000000.00" FontSize="16"/>
-            <TextBlock Text="Easting:"/>
+            <TextBlock Text="Elevation:"/>
             <TextBox x:Name="PntBElevation" Text="000.00" FontSize="16"/>
         </StackPanel>
 

@@ -128,12 +128,12 @@ namespace CFDG.ACAD
                 //Computations Tab
                 rtab.Panels.Add(
                     Ribbon.CreatePanel("Computations", "Computations",
-                        Ribbon.CreateLargeButton("Group Comp\nPoints", "CreateGroupOfCalcs", Properties.Resources.Create_PG),
+                        Ribbon.CreateLargeButton("Group Comp\nPoints", "GroupPoints", Properties.Resources.Create_PG),
                         Ribbon.RibbonSpacer,
-                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.TextOnly,
+                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.ImageOnly,
                             Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints"),
                             Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns"),
-                            Ribbon.CreateSmallButton("Footprint","Footprint")
+                            Ribbon.CreateSmallButton("Footprint", "Footprint")
                         )
                     )
                 );
@@ -145,7 +145,7 @@ namespace CFDG.ACAD
                 }
             }
 
-        } 
+        }
         #endregion
     }
 }
