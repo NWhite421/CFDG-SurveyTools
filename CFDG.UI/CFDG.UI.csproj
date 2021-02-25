@@ -107,6 +107,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="windows\Calculations\ExportPointGroup.xaml.cs">
+      <DependentUpon>ExportPointGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="windows\FeedbackWindow.xaml.cs">
       <DependentUpon>FeedbackWindow.xaml</DependentUpon>
     </Compile>
@@ -140,6 +143,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="windows\Calculations\ExportPointGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="windows\FeedbackWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

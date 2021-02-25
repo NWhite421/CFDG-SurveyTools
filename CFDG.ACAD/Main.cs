@@ -130,7 +130,7 @@ namespace CFDG.ACAD
                     Ribbon.CreatePanel("Computations", "Computations",
                         Ribbon.CreateLargeButton("Group Comp\nPoints", "GroupPoints", Properties.Resources.Create_PG),
                         Ribbon.RibbonSpacer,
-                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.ImageOnly,
+                        Ribbon.CreateRibbonRow(Ribbon.RibbonRowType.TextOnly,
                             Ribbon.CreateSmallButton("Slope From Points", "SlopeFromPoints"),
                             Ribbon.CreateSmallButton("Create Measure Down", "Measuredowns"),
                             Ribbon.CreateSmallButton("Footprint", "Footprint")

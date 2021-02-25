@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandClasses\Calculations\CreateACPoints.cs" />
+    <Compile Include="CommandClasses\Calculations\ExportGroup.cs" />
     <Compile Include="CommandClasses\Calculations\GroupPoints.cs" />
     <Compile Include="Extensions\PointGroupExtensions.cs" />
     <Compile Include="Interfaces\ICommandMethod.cs" />
