@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Autodesk.Civil.DatabaseServices;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace CFDG.UI.windows.Calculations
 {
@@ -29,8 +30,17 @@ namespace CFDG.UI.windows.Calculations
 
         public ExportPointGroup(PointGroupCollection pointGroups)
         {
+            InitializeComponent();
             this.pointGroups = pointGroups;
-            LbPointGroups.ItemsSource = pointGroups;
+            foreach (ObjectId pointGroupId in pointGroups)
+            {
+                PointGroup group = (PointGroup)pointGroupId.GetObject(OpenMode.ForRead);
+                if (true)
+                {
+                    LbPointGroups.Items.Add(group.Name);
+                }
+            }
+            this.DialogResult = false;
         }
     }
 }

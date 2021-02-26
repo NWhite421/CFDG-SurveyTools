@@ -52,7 +52,7 @@ namespace CFDG.ACAD.CommandClasses.Calculations
                 {
                     return (null, new Point2d(-1, -1));
                 }
-                Match match = Regex.Match(distanceStr, @"^\d+(.\d+)?$");
+                Match match = Regex.Match(distanceStr, @"^(-?)(\+?)\d+(\.\d+)?(@\d+)?$");
                 if (!match.Success)
                 {
                     AcEditor.WriteMessage($"\n{ distanceStr } is not a valid input. Please try again.\n");

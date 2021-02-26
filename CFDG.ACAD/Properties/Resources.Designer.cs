@@ -163,6 +163,16 @@ namespace CFDG.ACAD.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MeasureDown {
+            get {
+                object obj = ResourceManager.GetObject("MeasureDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap overlay_edit {
             get {
                 object obj = ResourceManager.GetObject("overlay-edit", resourceCulture);
