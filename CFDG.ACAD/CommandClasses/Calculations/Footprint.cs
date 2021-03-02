@@ -11,141 +11,111 @@ using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD.CommandClasses.Calculations
 {
+    //TODO!: Change to create a bunch of lines.
     public class Footprint : ICommandMethod
     {
+        #region Internal Properties
+
+        public static Point3d CurrentPoint { get; set; }
+        public static double CurrentAngle { get; set; }
+
+
+        #endregion
+
+
         [CommandMethod("Footprint", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
         public void InitialCommand()
         {
 
-            Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
-            Editor AcEditor = AcDocument.Editor;
-            Point3d startPoint = UserInput.SelectPointInDoc("Select a start point: ");
-            double baseAngle = UserInput.SelectAngleInDoc("Select a start angle: ", startPoint);
-
-            (Polyline line, Point2d currentPoint) = EstablishLine(startPoint, baseAngle);
-            while (true)
+            try
             {
-                (Point2d newPoint, double newAngle) = AddSide(line, baseAngle, currentPoint);
-                if (newAngle == -1)
+                Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
+                Editor AcEditor = AcDocument.Editor;
+                CurrentPoint = UserInput.SelectPointInDoc("Select a start point: ");
+                CurrentAngle = UserInput.SelectAngleInDoc("Select a start angle: ", CurrentPoint);
+                if (!EstablishLine(CurrentPoint, CurrentAngle))
                 {
-                    break;
+                    return;
                 }
-                currentPoint = newPoint;
-                baseAngle = newAngle;
+                while (true)
+                {
+                    if (!AddSide()) //If I don't add a side, consider the command to want to exit.
+                    {
+                        break;
+                    }
+                }
+                //TODO: Add misclosure calculations;
             }
-            Triangle triangle = new Triangle(new Point2d(startPoint.X, startPoint.Y), currentPoint);
-            AcEditor.WriteMessage($"\nClosure: {triangle.SideC}\tDeltaX: {triangle.SideA}\tDeltaY: {triangle.SideB}\n");
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        private static (Polyline, Point2d) EstablishLine(Point3d start, double angle)
+        private static bool EstablishLine(Point3d start, double angle)
         {
-            Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
-            Editor AcEditor = AcDocument.Editor;
-            Database AcDatabase = AcDocument.Database;
-            double distance;
-
-
-            while (true)
+            (var acDocument, var acEditor) = UserInput.GetCurrentDocSpace();
+            var distanceStr = UserInput.GetStringFromUser("Enter the distance: ");
+            if (!double.TryParse(distanceStr, out double distance))
             {
-                string distanceStr = UserInput.GetStringFromUser("Enter a distance for the side: ");
-                if (string.IsNullOrEmpty(distanceStr))
+                if (!(distance > 0))
                 {
-                    return (null, new Point2d(-1, -1));
-                }
-                Match match = Regex.Match(distanceStr, @"^(-?)(\+?)\d+(\.\d+)?(@\d+)?$");
-                if (!match.Success)
-                {
-                    AcEditor.WriteMessage($"\n{ distanceStr } is not a valid input. Please try again.\n");
-                }
-                else
-                {
-                    distance = double.Parse(distanceStr);
-                    break;
+                    return false;
                 }
             }
-
             Triangle triangle = new Triangle(distance, angle);
-            Polyline polyline;
-            Point2d newPoint;
-
-            using (Transaction DbTrans = AcDatabase.TransactionManager.StartTransaction())
-            {
-
-                BlockTable blkTbl = (BlockTable)DbTrans.GetObject(AcDatabase.BlockTableId, OpenMode.ForRead);
-                BlockTableRecord blkTblRcd = (BlockTableRecord)DbTrans.GetObject(blkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
-                polyline = new Polyline();
-                polyline.SetDatabaseDefaults();
-                polyline.AddVertexAt(0, new Point2d(start.X, start.Y), 0, 0, 0);
-                newPoint = new Point2d(start.X + triangle.SideA, start.Y + triangle.SideB);
-                polyline.AddVertexAt(1, newPoint, 0, 0, 0);
-                blkTblRcd.AppendEntity(polyline);
-                DbTrans.AddNewlyCreatedDBObject(polyline, true);
-                DbTrans.Commit();
-            }
-
-            return (polyline, newPoint);
+            Point3d endPoint = new Point3d(start.X + triangle.SideA, start.Y + triangle.SideB, start.Z);
+            CreateLine(start, endPoint);
+            CurrentPoint = endPoint;
+            return true;
         }
 
-        private static (Point2d, double) AddSide(Polyline polyline, double currentAngle, Point2d currentPoint)
+        private static bool AddSide()
         {
-            Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
-            Editor AcEditor = AcDocument.Editor;
-            Database AcDatabase = AcDocument.Database;
+            double angle, distance;
 
-            string side = UserInput.GetStringFromUser("Enter a distance for the side: ");
-
-            while (true)
+            string distanceStr = UserInput.GetStringFromUser("Enter a distance for the side: ");
+            if (string.IsNullOrEmpty(distanceStr))
             {
-                if (string.IsNullOrEmpty(side))
-                {
-                    return (new Point2d(0, 0), -1);
-                }
-                Match match = Regex.Match(side, @"^-?\d+(.\d+)?(@\d+)?$");
-                if (!match.Success)
-                {
-                    AcEditor.WriteMessage($"\n{ side } is not a valid input. Please try again.\n");
-                }
-                else
-                {
-                    double distance;
-                    double angle;
-                    if (side.Contains('@'))
-                    {
-                        string[] parts = side.Split('@');
-                        angle = double.Parse(parts[0]) > 0 ? double.Parse(parts[1]) * -1 : double.Parse(parts[1]);
-                        distance = Math.Abs(double.Parse(parts[0]));
-                    }
-                    else
-                    {
-                        angle = double.Parse(side) > 0 ? -90 : 90;
-                        distance = Math.Abs(double.Parse(side));
-                    }
-                    (Vector2d deltas, double newAngle) = GetVectorsFromAngle(currentAngle, angle, distance);
-                    angle = newAngle;
-
-                    using (Transaction AcDbTransaction = AcDatabase.TransactionManager.StartTransaction())
-                    {
-                        BlockTable blkTbl = (BlockTable)AcDbTransaction.GetObject(AcDatabase.BlockTableId, OpenMode.ForRead);
-                        BlockTableRecord blkTblRcd = (BlockTableRecord)AcDbTransaction.GetObject(blkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
-
-                        var Polyobject = (Polyline)AcDbTransaction.GetObject(polyline.ObjectId, OpenMode.ForWrite);
-                        currentPoint = new Point2d(currentPoint.X + deltas.X, currentPoint.Y + deltas.Y);
-                        Polyobject.AddVertexAt(Polyobject.NumberOfVertices, new Point2d(currentPoint.X, currentPoint.Y), 0, 0, 0);
-
-                        AcDbTransaction.Commit();
-                    }
-                    return (currentPoint, angle);
-                }
+                return false;
             }
+            Match match = Regex.Match(distanceStr, @"^(-?)(\+?)\d+(\.\d+)?(@\d+)?$");
+            if (!match.Success)
+            {
+                return false;
+            }
+            if (distanceStr.Contains('@'))
+            {
+                string[] parts = distanceStr.Split('@');
+                angle = double.Parse(parts[0]) > 0 ? double.Parse(parts[1]) * -1 : double.Parse(parts[1]);
+                distance = Math.Abs(double.Parse(parts[0]));
+            }
+            else
+            {
+                angle = double.Parse(distanceStr) > 0 ? -90 : 90;
+                distance = Math.Abs(double.Parse(distanceStr));
+            }
+            Point3d endPoint = GetPointFromAngle(angle, distance);
+            CreateLine(CurrentPoint, endPoint);
+            CurrentPoint = endPoint;
+            CurrentAngle += angle;
+            return true;
         }
 
-        private static (Vector2d deltas, double newAngle) GetVectorsFromAngle(double baseAngle, double angle, double distance)
+
+
+        private static Point3d GetPointFromAngle(double angle, double distance)
         {
-            double newAngle = baseAngle + angle;
+            double newAngle = CurrentAngle + angle;
             var measures = new Triangle(distance, newAngle);
 
-            return (new Vector2d(measures.SideA, measures.SideB), newAngle);
+            return new Point3d(CurrentPoint.X + measures.SideA, CurrentPoint.Y + measures.SideA, CurrentPoint.Z);
         }
 
+        private static void CreateLine(Point3d start, Point3d end)
+        {
+            Line line = new Line(start,end);
+            UserInput.AddObjectToDrawing(line);
+        }
     }
 }

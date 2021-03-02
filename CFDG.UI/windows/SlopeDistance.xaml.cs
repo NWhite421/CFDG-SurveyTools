@@ -34,9 +34,9 @@ namespace CFDG.UI
             if (Double.TryParse(((TextBox)sender).Text, out _))
             {
                 CalculateValues();
-                Distance.Foreground = Brushes.White;
-                Slope.Foreground = Brushes.White;
-                SlopeAct.Foreground = Brushes.White;
+                Distance.Foreground = Brushes.Black;
+                Slope.Foreground = Brushes.Black;
+                SlopeAct.Foreground = Brushes.Black;
             }
             else
             {
