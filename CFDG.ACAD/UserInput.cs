@@ -84,6 +84,7 @@ namespace CFDG.ACAD
             return new Point3d(-1, -1, -1);
         }
 
+
         /// <summary>
         /// Select a angle in the current document
         /// </summary>
@@ -98,6 +99,11 @@ namespace CFDG.ACAD
             var measures = new Triangle(distance, angle);
 
             return new Vector2d(measures.SideA, measures.SideB);
+        }
+
+        public static double SelectAngleInDoc(string message, Point2d basePoint)
+        {
+            return SelectAngleInDoc(message, new Point3d(basePoint.X, basePoint.Y, 0));
         }
 
         public static double SelectAngleInDoc(string message, Point3d basePoint)
@@ -122,6 +128,26 @@ namespace CFDG.ACAD
             }
 
             return (180 / Math.PI) * ar.Value;
+        }
+
+        public static void AddObjectToDrawing(Entity entity)
+        {
+            (Document acDocument, Editor acEditor) = GetCurrentDocSpace();
+            Database acDatabase = acDocument.Database;
+
+            using (Transaction acTrans = acDatabase.TransactionManager.StartTransaction())
+            {
+                // Open the Block table record for read
+                var acBlkTbl = acTrans.GetObject(acDatabase.BlockTableId, OpenMode.ForRead) as BlockTable;
+
+                // Open the Block table record Model space for write
+                var acBlkTblRec = acTrans.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
+
+                entity.SetDatabaseDefaults();
+                acBlkTblRec.AppendEntity(entity);
+                acTrans.AddNewlyCreatedDBObject(entity, true);
+                acTrans.Commit();
+            }
         }
 
         public static void AddPointToDrawing(Point3d point, string blockTableRecordSpace)
@@ -152,7 +178,7 @@ namespace CFDG.ACAD
         /// Get the current document and editor
         /// </summary>
         /// <returns>Document and Editor</returns>
-        private static (Document AcDocument, Editor AcEditor) GetCurrentDocSpace()
+        public static (Document AcDocument, Editor AcEditor) GetCurrentDocSpace()
         {
             Document document = AcApplication.DocumentManager.MdiActiveDocument;
             return (document, document.Editor);
