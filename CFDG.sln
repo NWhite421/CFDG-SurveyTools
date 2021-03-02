@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (ACAD 19)|Any CPU = Debug (ACAD 19)|Any CPU
@@ -58,14 +56,6 @@ Global
 		{0ADCD5D3-2DB7-410D-BE40-28B9718D217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ADCD5D3-2DB7-410D-BE40-28B9718D217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ADCD5D3-2DB7-410D-BE40-28B9718D217D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug (ACAD 19)|Any CPU.ActiveCfg = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug (ACAD 19)|Any CPU.Build.0 = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug (ACAD 21)|Any CPU.ActiveCfg = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug (ACAD 21)|Any CPU.Build.0 = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03ECBF9E-FADC-4564-9F17-1B5996EAEE0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
