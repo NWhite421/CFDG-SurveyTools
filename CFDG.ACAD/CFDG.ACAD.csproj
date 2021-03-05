@@ -212,5 +212,8 @@
   <ItemGroup>
     <None Include="Resources\MeasureDown.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\footprint.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

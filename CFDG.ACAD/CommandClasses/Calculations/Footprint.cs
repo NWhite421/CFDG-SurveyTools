@@ -11,12 +11,13 @@ using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace CFDG.ACAD.CommandClasses.Calculations
 {
-    //TODO!: Change to create a bunch of lines.
     public class Footprint : ICommandMethod
     {
         #region Internal Properties
 
         public static Point3d CurrentPoint { get; set; }
+
+        public static Point3d StartPoint { get; set; }
         public static double CurrentAngle { get; set; }
 
 
@@ -26,12 +27,13 @@ namespace CFDG.ACAD.CommandClasses.Calculations
         [CommandMethod("Footprint", CommandFlags.Modal | CommandFlags.NoPaperSpace)]
         public void InitialCommand()
         {
-
+            (_, Editor acEditor) = UserInput.GetCurrentDocSpace();
             try
             {
                 Document AcDocument = AcApplication.DocumentManager.MdiActiveDocument;
                 Editor AcEditor = AcDocument.Editor;
                 CurrentPoint = UserInput.SelectPointInDoc("Select a start point: ");
+                StartPoint = CurrentPoint;
                 CurrentAngle = UserInput.SelectAngleInDoc("Select a start angle: ", CurrentPoint);
                 if (!EstablishLine(CurrentPoint, CurrentAngle))
                 {
@@ -44,7 +46,10 @@ namespace CFDG.ACAD.CommandClasses.Calculations
                         break;
                     }
                 }
-                //TODO: Add misclosure calculations;
+
+                acEditor.WriteMessage($"\nMisclosure: {Math.Round(CurrentPoint.DistanceTo(StartPoint), 3)}\'\t" +
+                    $"Error N-S: {Math.Round(CurrentPoint.Y - StartPoint.Y, 3)}\'\t" +
+                    $"Error W-E: {Math.Round(CurrentPoint.X - StartPoint.X, 3)}\'\n");
             }
             catch (System.Exception ex)
             {
@@ -54,7 +59,6 @@ namespace CFDG.ACAD.CommandClasses.Calculations
 
         private static bool EstablishLine(Point3d start, double angle)
         {
-            (var acDocument, var acEditor) = UserInput.GetCurrentDocSpace();
             var distanceStr = UserInput.GetStringFromUser("Enter the distance: ");
             if (!double.TryParse(distanceStr, out double distance))
             {
@@ -73,6 +77,7 @@ namespace CFDG.ACAD.CommandClasses.Calculations
         private static bool AddSide()
         {
             double angle, distance;
+            (_, Editor acEditor) = UserInput.GetCurrentDocSpace();
 
             string distanceStr = UserInput.GetStringFromUser("Enter a distance for the side: ");
             if (string.IsNullOrEmpty(distanceStr))
@@ -82,7 +87,8 @@ namespace CFDG.ACAD.CommandClasses.Calculations
             Match match = Regex.Match(distanceStr, @"^(-?)(\+?)\d+(\.\d+)?(@\d+)?$");
             if (!match.Success)
             {
-                return false;
+                acEditor.WriteMessage($"\nThe value \"{distanceStr}\" is not a valid input\n");
+                return true; //Return true to not exit the command
             }
             if (distanceStr.Contains('@'))
             {
@@ -95,10 +101,11 @@ namespace CFDG.ACAD.CommandClasses.Calculations
                 angle = double.Parse(distanceStr) > 0 ? -90 : 90;
                 distance = Math.Abs(double.Parse(distanceStr));
             }
-            Point3d endPoint = GetPointFromAngle(angle, distance);
+            CurrentAngle += angle;
+            Triangle triangle = new Triangle(distance, CurrentAngle);
+            Point3d endPoint = new Point3d(CurrentPoint.X + triangle.SideA, CurrentPoint.Y + triangle.SideB, 0);
             CreateLine(CurrentPoint, endPoint);
             CurrentPoint = endPoint;
-            CurrentAngle += angle;
             return true;
         }
 
