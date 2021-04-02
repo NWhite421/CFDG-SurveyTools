@@ -21,26 +21,34 @@ namespace CFDG.UI.windows.Calculations
     /// </summary>
     public partial class ExportPointGroup : Window
     {
-        private PointGroupCollection pointGroups;
+        public Models.ExportPointGroupModel PointGroupModel { get; set; }
 
         public ExportPointGroup()
         {
             InitializeComponent();
         }
 
-        public ExportPointGroup(PointGroupCollection pointGroups)
+        public ExportPointGroup(List<string> pointGroups, string path)
         {
             InitializeComponent();
-            this.pointGroups = pointGroups;
-            foreach (ObjectId pointGroupId in pointGroups)
+            PointGroupModel = new Models.ExportPointGroupModel();
+            LbPointGroups.Items.Add("!All Points");
+            LbPointGroups.Items.Add("!Comp Points");
+            foreach (string group in pointGroups)
             {
-                PointGroup group = (PointGroup)pointGroupId.GetObject(OpenMode.ForRead);
-                if (true)
-                {
-                    LbPointGroups.Items.Add(group.Name);
-                }
+                LbPointGroups.Items.Add(group);
             }
+            LbPointGroups.Items.IsLiveSorting = true;
+            string jobNumber = API.JobNumber.Parse(path, API.JobNumberFormats.ShortHyphan);
+            this.Title = $"Export Point Groups - {jobNumber}";
+
+            PointGroupModel.FileName = API.JobNumber.GetPath(jobNumber);
+        }
+
+        private void CmdCancel_Click(object sender, RoutedEventArgs e)
+        {
             this.DialogResult = false;
+            this.Close();
         }
     }
 }
